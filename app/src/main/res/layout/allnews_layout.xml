@@ -1,0 +1,66 @@
+<androidx.coordinatorlayout.widget.CoordinatorLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/newsRecycler"/>
+
+        </LinearLayout>
+        <ImageView
+            android:id="@+id/newsNoPost"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:src="@drawable/ic_nopost"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
+        <com.getbase.floatingactionbutton.FloatingActionsMenu
+            android:id="@+id/fabMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="10dp"
+            app:fab_addButtonPlusIconColor="@android:color/white"
+            app:fab_addButtonColorNormal="@color/colorPrimary"
+            style="@style/CustomFabStyle">
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:fab_colorNormal="@android:color/holo_orange_dark"
+                app:fab_icon="@drawable/ic_baseline_settings_24"
+                app:fab_title="Settings Label"
+                android:id="@+id/settingsMenu"
+                app:fabSize="normal"
+                />
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:fab_title="Delete Label"
+                android:id="@+id/deleteMenu"
+                app:fab_icon="@drawable/ic_baseline_delete_24"
+                app:fab_colorNormal="@android:color/holo_orange_dark"
+                app:fabSize="normal"
+                />
+
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:fab_title="Delete Label"
+                android:id="@+id/favNews"
+                app:fab_icon="@drawable/ic_favorite"
+                app:fab_colorNormal="@android:color/holo_orange_dark"
+                app:fabSize="normal"
+                />
+        </com.getbase.floatingactionbutton.FloatingActionsMenu>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>

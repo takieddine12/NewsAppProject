@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        android:title="@string/alllanguages"
+        android:textColor="@android:color/holo_red_dark"
+        />
+    <CheckBoxPreference
+        android:title="@string/frenchlang"
+        android:key="french"
+        />
+
+    <CheckBoxPreference
+        android:title="@string/spanishlang"
+        android:key="spanish"
+        />
+
+    <CheckBoxPreference
+        android:title="@string/englishlang"
+        android:key="english"
+        />
+
+    <Preference
+        android:title="Dark Mode"
+        android:textColor="@android:color/holo_red_dark"
+        app:allowDividerAbove="true"/>
+    <SwitchPreference
+        android:key="switch"
+        android:title="Tured OFF"/>
+
+
+
+</PreferenceScreen>

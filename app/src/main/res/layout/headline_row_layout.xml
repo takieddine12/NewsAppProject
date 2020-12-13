@@ -1,0 +1,108 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="listener"
+            type="com.example.testingproject.newslistener.HeadlinesOnListener" />
+        <variable
+            name="headlines"
+            type="com.example.testingproject.newsmodels.HeadlinesModel" />
+        <variable
+            name="position"
+            type="int" />
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:cardElevation="12dp"
+        app:cardCornerRadius="6dp">
+
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ProgressBar
+                android:id="@+id/headlinesProgressBar"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:visibility="visible"
+                android:layout_gravity="center"
+                android:layout_marginTop="30dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:onClick="@{() -> listener.headlinesOnClick(headlines,position)}"
+                android:orientation="vertical">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="130dp"
+                    android:background="@drawable/placeholder"
+                    app:general="@{headlines.articles.get(position).urlToImage}"
+                    tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:layout_marginTop="5dp"
+                    android:text="@{headlines.articles.get(position).title}"
+                    android:textSize="12sp"
+                    />
+
+                <TextView
+
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:maxLines="3"
+                    android:layout_marginTop="5dp"
+                    android:text="@{headlines.articles.get(position).description}"
+                    android:textSize="12sp"
+                    />
+
+                <TextView
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:layout_marginTop="5dp"
+                    android:text="@{headlines.articles.get(position).author}"
+                    android:textSize="12sp"
+                    />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp"
+                    android:ellipsize="end"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:layout_marginTop="5dp"
+                    android:text="@{headlines.articles.get(position).publishedAt}"
+                    android:textSize="12sp"
+                    />
+
+            </LinearLayout>
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </androidx.cardview.widget.CardView>
+
+
+</layout>

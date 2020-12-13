@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Newsy.</string>
+    <string name="englishlang">Anglais</string>
+    <string name="spanishlang">Espagnole</string>
+    <string name="frenchlang">Francais</string>
+    <string name="no_cancel">Non, Annuler</string>
+    <string name="yes_delete">Oui, Supprimer</string>
+    <string name="headline">Titre</string>
+    <string name="author">Auteur</string>
+    <string name="published_at">Publié a</string>
+    <string name="details">Détails</string>
+    <string name="delete_suggestions">SUPPRIMER LES SUGGESTIONS</string>
+    <string name="are_you_sure_you_want_to_delete_suggestions">Voulez-vous vraiment supprimer les suggestions!</string>
+    <string name="allnews">Nouvelles</string>
+    <string name="topheadlines">Manchettes</string>
+    <string name="networkerror">Erreur réseau..</string>
+    <string name="suggestions">Suggestions</string>
+    <string name="settings">Paramétres</string>
+    <string name="delete_suggestionsmenu">Supprimer Suggesions</string>
+    <string name="version">Version</string>
+    <string name="version_1_0_0">Version 1.0.0</string>
+    <string name="alllanguages">Choix de langue</string>
+    <string name="allarticlesdeleted">" Tous les articles ont été supprimés ..."</string>
+    <string name="nodataddedyet">Aucune donnée ajoutée pour l\'instant</string>
+    <string name="articlessuccessfullydeleted">Article supprimé..</string>
+    <string name="dailynews">Nouvelles Quotidiennes</string>
+    <string name="updateheadlines">Exclusivité</string>
+    <string name="headlinestitle">Nous fournissons des nouvelles quotidiennes de sources fiables pour vous tenir au courant des dernières nouvelles.</string>
+    <string name="headlinetitle2">Manchettes mises à jour quotidiennement pour vous offrir une meilleure expérience.</string>
+    <string name="deletenews">Supprimer Les Nouvelles</string>
+    <string name="areyousureyouwanttodeleteall">Voulez-vous vraiment tout supprimer !</string>
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
+</resources>

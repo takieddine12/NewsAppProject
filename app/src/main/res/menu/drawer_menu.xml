@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:show_In="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item android:title="@string/version">
+        <menu>
+            <item android:title="@string/version_1_0_0"
+                android:id="@+id/version"
+                android:icon="@drawable/ic_info_black_24dp"/>
+        </menu>
+    </item>
+    </group>
+
+</menu>

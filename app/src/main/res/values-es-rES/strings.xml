@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Newsy.</string>
+    <string name="headline">Titular</string>
+    <string name="author">Autor</string>
+    <string name="published_at">Publicado En</string>
+    <string name="details">Detalles</string>
+    <string name="delete_suggestions">ELIMINAR SUGERENCIAS</string>
+    <string name="are_you_sure_you_want_to_delete_suggestions">Estás segura de que quieres eliminar sugerencias!</string>
+    <string name="yes_delete">Sí, eliminar</string>
+    <string name="no_cancel">No, cancelar</string>
+    <string name="frenchlang">Francés</string>
+    <string name="spanishlang">Español</string>
+    <string name="englishlang">"Inglés "</string>
+    <string name="allnews">Noticias</string>
+    <string name="topheadlines">Titulares</string>
+    <string name="networkerror">Error de red..</string>
+    <string name="settings">Ajustes</string>
+    <string name="suggestions">Sugerencias</string>
+    <string name="delete_suggestionsmenu">Eliminar Sugerencias</string>
+    <string name="version">Versión</string>
+    <string name="version_1_0_0">Versión 1.0.0</string>
+    <string name="alllanguages">Seleccionar idioma</string>
+    <string name="allarticlesdeleted">" Todos los artículos eliminados..."</string>
+    <string name="nodataddedyet">" No hay datos agregados todavía ..."</string>
+    <string name="articlessuccessfullydeleted">" Artículo eliminado.."</string>
+    <string name="dailynews">Noticias Diarias</string>
+    <string name="updateheadlines">Exclusividad</string>
+    <string name="headlinestitle">Proporcionamos noticias diarias de fuentes confiables para mantenerlo en contacto con las últimas noticias.</string>
+    <string name="headlinetitle2">" Titulares Actualizados diariamente para brindarle una mejor experiencia."</string>
+    <string name="areyousureyouwanttodeleteall">Estás seguro de que quieres eliminar todo</string>
+    <string name="yes">Si</string>
+    <string name="no">No</string>
+    <string name="deletenews">Borras Noticias</string>
+</resources>
