@@ -11,6 +11,7 @@ import com.example.testingproject.models.FavNewsModel
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_news__details_.*
+import timber.log.Timber
 
 @AndroidEntryPoint
 class NewsDetailsActivity : AppCompatActivity() {
@@ -27,11 +28,11 @@ class NewsDetailsActivity : AppCompatActivity() {
             val intent = intent
             intent?.let {
                 binding.apply {
-                    setAuthor.text = intent.getStringExtra("author")
-                    favdescription.text = intent.getStringExtra("description")
-                    favtitle.text = intent.getStringExtra("title")
-                    toolbar.title = intent.getStringExtra("date")
-                    Picasso.get().load(intent.getStringExtra("imgUrl")).fit().into(favImage)
+                    setAuthor.text = it.getStringExtra("author")
+                    favdescription.text = it.getStringExtra("description")
+                    favtitle.text = it.getStringExtra("title")
+                    dateText.text = it.getStringExtra("date")
+                    Picasso.get().load(it.getStringExtra("imgUrl")).fit().into(favImage)
                 }
             }
 

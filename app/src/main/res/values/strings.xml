@@ -31,4 +31,6 @@
     <string name="areyousureyouwanttodeleteall">Are you sure you want to delete all !</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="darkmod">Dark Mode ON</string>
+    <string name="lightmode">Light Mode ON</string>
 </resources>

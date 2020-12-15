@@ -45,7 +45,7 @@ class NewsFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = AllnewsLayoutBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -103,92 +103,92 @@ class NewsFragment : Fragment() {
             }
         }
     }
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setHasOptionsMenu(true)
-//    }
-//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-//        super.onCreateOptionsMenu(menu, inflater)
-//        inflater.inflate(R.menu.menu1, menu)
-//        val menuItem = menu.findItem(R.id.newsSearchView)?.actionView as SearchView
-//        menuItem.findViewById<ImageView>(androidx.appcompat.R.id.search_button).apply {
-//            setImageDrawable(ContextCompat.getDrawable(requireContext(),R.drawable.ic_search_black_24dp))
-//        }
-//        menuItem.findViewById<SearchView.SearchAutoComplete>(androidx.appcompat
-//            .R.id.search_src_text).apply {
-//                setHintTextColor(Color.WHITE)
-//                setTextColor(Color.WHITE)
-//        }
-//        menuItem.queryHint = "search"
-//        menuItem.findViewById<AutoCompleteTextView>(R.id.search_src_text).threshold = 1
-//        val from = arrayOf(SearchManager.SUGGEST_COLUMN_TEXT_1)
-//        val to = intArrayOf(R.id.item_label)
-//        val cursorAdapter = SimpleCursorAdapter(
-//            requireContext(),
-//            R.layout.suggestions_layout,
-//            null,
-//            from,
-//            to,
-//            CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
-//        )
-//        menuItem.suggestionsAdapter = cursorAdapter
-//        menuItem.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-//            override fun onQueryTextChange(newText: String?): Boolean {
-//                return false
-//            }
-//
-//            override fun onQueryTextSubmit(query: String?): Boolean {
-//                fetchData(query!!)
-//                CoroutineScope(Dispatchers.IO).launch {
-//                    mainViewModel.insertSuggestions(SuggestionsModel(query))
-//                }
-//
-//                val cursor = MatrixCursor(
-//                    arrayOf(
-//                        BaseColumns._ID,
-//                        SearchManager.SUGGEST_COLUMN_TEXT_1
-//                    )
-//                )
-//                CoroutineScope(Dispatchers.IO).launch {
-//                    mainViewModel.getSuggestions().observe(
-//                        viewLifecycleOwner,
-//                        androidx.lifecycle.Observer { list ->
-//                            query.let {
-//                                list.forEachIndexed { index, suggestionsModel ->
-//                                    if (suggestionsModel.suggestion?.contains(it!!, true)!!) {
-//                                        cursor.addRow(arrayOf(index, suggestionsModel.suggestion))
-//                                    }
-//                                }
-//                            }
-//                        })
-//                }
-//                cursorAdapter.changeCursor(cursor)
-//                return true
-//            }
-//        })
-//        menuItem.setOnSuggestionListener(object : SearchView.OnSuggestionListener {
-//            override fun onSuggestionClick(position: Int): Boolean {
-//                val cursor = menuItem.suggestionsAdapter.getItem(position) as Cursor
-//                val selection =
-//                    cursor.getString(cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1))
-//                menuItem.setQuery(selection, false)
-//                fetchData(selection)
-//                return false
-//            }
-//
-//            override fun onSuggestionSelect(position: Int): Boolean {
-//                return false
-//            }
-//        })
-//    }
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        when (item.itemId) {
-//            R.id.newsVoice -> {
-//                voiceSearch()
-//            }
-//        }
-//        return true
-//    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.menu1, menu) //menu1
+        val menuItem = menu.findItem(R.id.newsSearchView).actionView as SearchView
+        menuItem.findViewById<ImageView>(androidx.appcompat.R.id.search_button).apply {
+            setImageDrawable(ContextCompat.getDrawable(requireContext(),R.drawable.ic_search_black_24dp))
+        }
+        menuItem.findViewById<SearchView.SearchAutoComplete>(androidx.appcompat
+            .R.id.search_src_text).apply {
+                setHintTextColor(Color.WHITE)
+                setTextColor(Color.WHITE)
+        }
+        menuItem.queryHint = "search"
+        menuItem.findViewById<AutoCompleteTextView>(R.id.search_src_text).threshold = 1
+        val from = arrayOf(SearchManager.SUGGEST_COLUMN_TEXT_1)
+        val to = intArrayOf(R.id.item_label)
+        val cursorAdapter = SimpleCursorAdapter(
+            requireContext(),
+            R.layout.suggestions_layout,
+            null,
+            from,
+            to,
+            CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER
+        )
+        menuItem.suggestionsAdapter = cursorAdapter
+        menuItem.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                fetchData(query!!)
+                CoroutineScope(Dispatchers.IO).launch {
+                    mainViewModel.insertSuggestions(SuggestionsModel(query))
+                }
+
+                val cursor = MatrixCursor(
+                    arrayOf(
+                        BaseColumns._ID,
+                        SearchManager.SUGGEST_COLUMN_TEXT_1
+                    )
+                )
+                CoroutineScope(Dispatchers.IO).launch {
+                    mainViewModel.getSuggestions().observe(
+                        viewLifecycleOwner,
+                        androidx.lifecycle.Observer { list ->
+                            query.let {
+                                list.forEachIndexed { index, suggestionsModel ->
+                                    if (suggestionsModel.suggestion?.contains(it!!, true)!!) {
+                                        cursor.addRow(arrayOf(index, suggestionsModel.suggestion))
+                                    }
+                                }
+                            }
+                        })
+                }
+                cursorAdapter.changeCursor(cursor)
+                return true
+            }
+        })
+        menuItem.setOnSuggestionListener(object : SearchView.OnSuggestionListener {
+            override fun onSuggestionClick(position: Int): Boolean {
+                val cursor = menuItem.suggestionsAdapter.getItem(position) as Cursor
+                val selection =
+                    cursor.getString(cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1))
+                menuItem.setQuery(selection, false)
+                fetchData(selection)
+                return false
+            }
+
+            override fun onSuggestionSelect(position: Int): Boolean {
+                return false
+            }
+        })
+    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.newsVoice -> {
+                voiceSearch()
+            }
+        }
+        return true
+    }
     private fun fetchData(query: String) {
         mainViewModel.getAll(query, Utils.API_KEY, 1).observe(
             viewLifecycleOwner,

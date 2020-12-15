@@ -12,6 +12,7 @@ import android.util.DisplayMetrics
 import android.view.Gravity
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.GravityCompat
 import com.example.flatdialoglibrary.dialog.FlatDialog
 import com.example.testingproject.databinding.ActivityMainBinding
@@ -31,6 +32,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         updateResources()
+        setDarkLightMode()
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbar)
@@ -117,6 +119,15 @@ class MainActivity : AppCompatActivity() {
                      }
                 }
             }
+        }
+    }
+    private fun setDarkLightMode(){
+        val modesPrefs = getSharedPreferences("modes",Context.MODE_PRIVATE)
+        val isModeEnabled = modesPrefs.getBoolean("mode",false)
+        if(isModeEnabled){
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         }
     }
     override fun onBackPressed() {

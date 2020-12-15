@@ -1,5 +1,6 @@
 package com.example.testingproject
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -7,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.LocaleList
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -40,6 +42,7 @@ class SettingsActivity : AppCompatActivity() {
         return true
     }
         class PreferenceSettings : PreferenceFragmentCompat() {
+            @SuppressLint("CommitPrefEdits")
             override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
                 setPreferencesFromResource(R.xml.preferencesettings, rootKey)
                 val frenchCheckBox: CheckBoxPreference =
@@ -89,8 +92,8 @@ class SettingsActivity : AppCompatActivity() {
                         }
                         true
                     }
-                englishCheckBox.onPreferenceChangeListener =
-                    Preference.OnPreferenceChangeListener { preference, newValue ->
+
+                englishCheckBox.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, newValue ->
                         val isEnglishChecked = newValue as Boolean
                         if (isEnglishChecked) {
                             frenchCheckBox.isChecked = false
@@ -108,11 +111,23 @@ class SettingsActivity : AppCompatActivity() {
                     }
                 switch.onPreferenceChangeListener =
                     Preference.OnPreferenceChangeListener { preference, newValue ->
+                        val modesPrefs = requireContext().getSharedPreferences("modes",Context.MODE_PRIVATE)
+                        val modesEditor = modesPrefs.edit()
                         val isSwitchChecked = newValue as Boolean
                         if (isSwitchChecked) {
-                            switch.title = "Turned ON"
+                            modesEditor.apply {
+                                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                                putBoolean("mode",true)
+                                apply()
+                                switch.title = getString(R.string.darkmod)
+                            }
                         } else {
-                            switch.title = "Turned OFF"
+                            modesEditor.apply {
+                                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                                putBoolean("mode", false)
+                                apply()
+                                switch.title = getString(R.string.lightmode)
+                            }
                         }
                         true
                     }
