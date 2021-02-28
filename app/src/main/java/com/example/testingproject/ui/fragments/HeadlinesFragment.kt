@@ -1,4 +1,4 @@
-package com.example.testingproject.fragments
+package com.example.testingproject.ui.fragments
 
 import android.app.Activity
 import android.app.SearchManager
@@ -19,22 +19,26 @@ import androidx.cursoradapter.widget.SimpleCursorAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.barisatalay.filterdialog.FilterDialog
 import com.barisatalay.filterdialog.model.DialogListener
 import com.example.testingproject.*
 import com.example.testingproject.recyclers.HeadLinesAdapter
-import com.example.testingproject.viewmodel.MainViewModel
+import com.example.testingproject.mvvm.MainViewModel
 import com.example.testingproject.databinding.TopheadlinesLayoutBinding
-import com.example.testingproject.favnews.FavNewsActivity
+import com.example.testingproject.ui.FavNewsActivity
 import com.example.testingproject.models.SuggestionsModel
-import com.example.testingproject.newsdetails.NewsDetailsActivity
+import com.example.testingproject.ui.NewsDetailsActivity
 import com.example.testingproject.newslistener.HeadlinesOnListener
 import com.example.testingproject.newsmodels.HeadlinesModel
+import com.example.testingproject.ui.SettingsActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.*
 
 
@@ -49,7 +53,6 @@ class HeadlinesFragment : Fragment() {
         binding = TopheadlinesLayoutBinding.inflate(inflater,container,false)
         return binding.root
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.headlinesRecycler.layoutManager = GridLayoutManager(requireContext(),2)
@@ -90,7 +93,7 @@ class HeadlinesFragment : Fragment() {
             }
         }
         binding.settingsMenu.setOnClickListener {
-            Intent(requireContext(),SettingsActivity::class.java).apply {
+            Intent(requireContext(), SettingsActivity::class.java).apply {
                 startActivity(this)
             }
             binding.fabMenu.collapse()
@@ -103,18 +106,15 @@ class HeadlinesFragment : Fragment() {
         }
     }
     private fun fetchData() {
-            mainViewModel.AllHeadlines("us",Utils.API_KEY,1)
-                .observe(viewLifecycleOwner, Observer { pagedList ->
-                    if(pagedList != null){
-                        binding.headlinesNoPost.visibility = View.INVISIBLE
-                        headlinesAdapter.submitList(pagedList)
-                        binding.headlinesRecycler.adapter = headlinesAdapter
-                    } else {
-                        binding.headlinesNoPost.visibility = View.VISIBLE
-                    }
-                })
-    }
+           lifecycleScope.launchWhenStarted {
+               mainViewModel.getHeadLines("us",Utils.API_KEY).collect { pagedList ->
+                   binding.headlinesNoPost.visibility = View.INVISIBLE
+                   headlinesAdapter.submitData(pagedList)
+                   binding.headlinesRecycler.adapter = headlinesAdapter
+                   }
+           }
 
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
@@ -197,17 +197,13 @@ class HeadlinesFragment : Fragment() {
 
             show("code","name",
                 DialogListener.Single { selectedItem ->
-                    mainViewModel.AllHeadlines(selectedItem!!.name,Utils.API_KEY,1).observe(viewLifecycleOwner,
-                        Observer {
-                            if(it != null){
-                                binding.headlinesNoPost.visibility = View.INVISIBLE
-                                headlinesAdapter.submitList(it)
-                                binding.headlinesRecycler.adapter  = headlinesAdapter
-                            } else {
-                                binding.headlinesNoPost.visibility = View.VISIBLE
-                            }
-                        })
-                   dispose()
+                    lifecycleScope.launch {
+                        mainViewModel.getHeadLines(selectedItem!!.name, Utils.API_KEY).collect {
+                            binding.headlinesNoPost.visibility = View.INVISIBLE
+                            headlinesAdapter.submitData(it)
+                            binding.headlinesRecycler.adapter = headlinesAdapter
+                        }
+                    }
                 })
         }
     }
@@ -232,15 +228,14 @@ class HeadlinesFragment : Fragment() {
        }
     }
     private fun fetchData(query: String) {
-        mainViewModel.AllHeadlines(query,Utils.API_KEY,1).observe(viewLifecycleOwner, Observer { pagedList ->
-            if(pagedList != null){
+
+        lifecycleScope.launchWhenStarted {
+            mainViewModel.getHeadLines(query,Utils.API_KEY).collect { pagedList ->
                 binding.headlinesNoPost.visibility = View.INVISIBLE
-                headlinesAdapter.submitList(pagedList)
+                headlinesAdapter.submitData(pagedList)
                 binding.headlinesRecycler.adapter = headlinesAdapter
-            } else {
-                binding.headlinesNoPost.visibility = View.VISIBLE
             }
-        })
+        }
     }
     private fun voiceSearch() {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)

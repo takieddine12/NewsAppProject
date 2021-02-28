@@ -1,4 +1,4 @@
-package com.example.testingproject.favnews
+package com.example.testingproject.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.testingproject.*
 import com.example.testingproject.recyclers.FavNewsAdapter
-import com.example.testingproject.viewmodel.MainViewModel
+import com.example.testingproject.mvvm.MainViewModel
 import com.example.testingproject.databinding.ActivityFavNewsBinding
 import com.example.testingproject.models.FavNewsModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -69,7 +69,7 @@ class FavNewsActivity : AppCompatActivity() {
                 }
             }
             android.R.id.home -> {
-                Intent(this,MainActivity::class.java).apply {
+                Intent(this, MainActivity::class.java).apply {
                     startActivity(this)
                 }
             }

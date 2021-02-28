@@ -8,9 +8,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
-import com.example.testingproject.newsdetails.NewsDetailsActivity
+import com.example.testingproject.ui.NewsDetailsActivity
 import com.example.testingproject.R
-import com.example.testingproject.viewmodel.MainViewModel
+import com.example.testingproject.mvvm.MainViewModel
 import com.example.testingproject.databinding.FavRowLayoutBinding
 import com.example.testingproject.models.FavNewsModel
 import com.example.testingproject.newslistener.FavOnListener

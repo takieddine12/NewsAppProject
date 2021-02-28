@@ -1,15 +1,14 @@
 package com.example.testingproject.recyclers
 
-import android.content.Context
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.paging.PagedListAdapter
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.example.testingproject.newsdetails.NewsDetailsActivity
+import androidx.viewpager.widget.PagerAdapter
 import com.example.testingproject.R
 import com.example.testingproject.databinding.NewsRowLayoutBinding
 import com.example.testingproject.newslistener.NewsOnListener
@@ -19,7 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class NewsAdapter (var newsOnListener: NewsOnListener) : PagedListAdapter<NewsModel,NewsAdapter.ViewHolder>(diffUtil) {
+class NewsAdapter (var newsOnListener: NewsOnListener) : PagingDataAdapter<NewsModel,NewsAdapter.ViewHolder>(diffUtil) {
 
     class ViewHolder(var newsRowLayoutBinding: NewsRowLayoutBinding) : RecyclerView.ViewHolder(newsRowLayoutBinding.root)
 
@@ -41,9 +40,7 @@ class NewsAdapter (var newsOnListener: NewsOnListener) : PagedListAdapter<NewsMo
              }
          }
     }
-     override fun getItem(position: Int): NewsModel? {
-        return super.getItem(position)
-    }
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val model = getItem(position)
 //        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.getDefault())

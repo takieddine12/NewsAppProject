@@ -7,7 +7,7 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import com.example.testingproject.R
-import com.example.testingproject.fragments.HeadlinesFragment
+import com.example.testingproject.ui.fragments.HeadlinesFragment
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith

@@ -1,17 +1,16 @@
-package com.example.testingproject.newsdetails
+package com.example.testingproject.ui
 
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.testingproject.showToast
 import com.example.testingproject.Utils
-import com.example.testingproject.viewmodel.MainViewModel
+import com.example.testingproject.mvvm.MainViewModel
 import com.example.testingproject.databinding.ActivityNewsDetailsBinding
 import com.example.testingproject.models.FavNewsModel
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_news__details_.*
-import timber.log.Timber
 
 @AndroidEntryPoint
 class NewsDetailsActivity : AppCompatActivity() {

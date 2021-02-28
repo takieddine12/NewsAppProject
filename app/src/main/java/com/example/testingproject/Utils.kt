@@ -8,8 +8,8 @@ import es.dmoral.toasty.Toasty
 object Utils {
 
     const val API_KEY = "a9105f91876947b1b3b70761813fd4f9"
-    const val NETWORK_PAGE_SIZE = 10
-    const val CACHE_PAGE_SIZE = 10
+    const val NETWORK_PAGE_SIZE = 15
+    const val CACHE_PAGE_SIZE = 15
 
     fun checkConnectivity(context: Context) : Boolean{
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

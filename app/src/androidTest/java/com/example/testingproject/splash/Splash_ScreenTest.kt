@@ -2,6 +2,7 @@ package com.example.testingproject.splash
 
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
+import com.example.testingproject.ui.SplashActivity
 import org.junit.Rule
 import org.junit.runner.RunWith
 

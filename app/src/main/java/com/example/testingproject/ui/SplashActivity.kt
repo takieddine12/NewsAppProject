@@ -1,11 +1,10 @@
-package com.example.testingproject.splash
+package com.example.testingproject.ui
 
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import com.example.testingproject.MainActivity
 import com.example.testingproject.R
 import com.github.paolorotolo.appintro.AppIntro2
 import com.github.paolorotolo.appintro.AppIntro2Fragment
@@ -30,7 +29,7 @@ class SplashActivity : AppIntro2() {
             showIntro(titlesArray,headlinesArray,newsImages)
         } else
         {
-            startActivity(Intent(this,MainActivity::class.java))
+            startActivity(Intent(this, MainActivity::class.java))
             finish()
         }
     }
@@ -60,7 +59,7 @@ class SplashActivity : AppIntro2() {
     }
     override fun onDonePressed(currentFragment: Fragment?) {
         super.onDonePressed(currentFragment)
-        Intent(this,MainActivity::class.java).apply {
+        Intent(this, MainActivity::class.java).apply {
             startActivity(this)
             finish()
         }

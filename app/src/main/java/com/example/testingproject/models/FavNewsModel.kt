@@ -14,7 +14,7 @@ class FavNewsModel(
 {
     @PrimaryKey(autoGenerate = true)
     @NotNull
-    var favnewsId: Int? = null
+    var favnewsId: Long? = null
 
 
 }

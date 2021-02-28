@@ -1,18 +1,17 @@
-package com.example.testingproject
+package com.example.testingproject.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.LocaleList
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
+import com.example.testingproject.R
 import com.example.testingproject.databinding.ActivitySettingsBinding
 import java.util.*
 

@@ -1,15 +1,13 @@
 package com.example.testingproject.recyclers
 
-import android.content.Context
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.paging.PagedListAdapter
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.example.testingproject.newsdetails.NewsDetailsActivity
 import com.example.testingproject.R
 import com.example.testingproject.databinding.HeadlineRowLayoutBinding
 import com.example.testingproject.newslistener.HeadlinesOnListener
@@ -20,7 +18,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
-class HeadLinesAdapter(private var headlinesOnListener: HeadlinesOnListener) : PagedListAdapter<HeadlinesModel, HeadLinesAdapter.ViewHolder>(DiffutilCallBack()) {
+class HeadLinesAdapter(private var headlinesOnListener: HeadlinesOnListener) : PagingDataAdapter<HeadlinesModel, HeadLinesAdapter.ViewHolder>(DiffutilCallBack()) {
 
     class ViewHolder(var headlinesRowLayoutBinding: HeadlineRowLayoutBinding) : RecyclerView.ViewHolder(headlinesRowLayoutBinding.root)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

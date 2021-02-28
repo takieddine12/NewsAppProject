@@ -1,13 +1,14 @@
 package com.example.testingproject.boundariescallbacks
 
 import android.util.Log
-import androidx.paging.PagedList
+import androidx.paging.*
 import com.example.testingproject.room.NewsDao
 import com.example.testingproject.Utils
-import com.example.testingproject.newsmodels.Article
-import com.example.testingproject.newsmodels.ArticleX
+import com.example.testingproject.models.NewsItemRemoteKeys
 import com.example.testingproject.newsmodels.NewsModel
-import com.example.testingproject.viewmodel.MainViewModel
+import com.example.testingproject.mvvm.MainViewModel
+import com.example.testingproject.newsmodels.ArticleX
+import com.example.testingproject.webauth.ApiResponse
 import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -16,10 +17,78 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class BoundaryCallBackNews(var newsDao: NewsDao,
-                           var query : String,
-                           var mainViewModel: MainViewModel) :
-    PagedList.BoundaryCallback<NewsModel>() {
+@ExperimentalPagingApi
+class BoundaryCallBackNews(
+    var apiResponse: ApiResponse,
+    val initialPage : Int = 1,
+    var query : String,
+    var mainViewModel: MainViewModel) :
+    RemoteMediator<Int,ArticleX>() {
+    override suspend fun load(loadType: LoadType, state: PagingState<Int, ArticleX>): MediatorResult {
+        val pageState = when(loadType){
+            LoadType.REFRESH -> {
+                val remoteKeys = getRemoteKeyClosestToCurrentPosition(state = state)
+                remoteKeys?.nextKey?.minus(1) ?: initialPage
+            }
+            LoadType.PREPEND -> {
+                return MediatorResult.Success(true)
+            }
+            LoadType.APPEND -> {
+                val remoteKeys = getRemoteKeyForLastItem(state)
+                remoteKeys?.nextKey ?: return MediatorResult.Success(true)
+            }
+        }
+
+
+        // TODO : Inserting Response Into DataBase
+        val response  = apiResponse.getNews(query,apiKey = Utils.API_KEY,page = pageState).articles
+        val endOfPaginationReached = response.size < state.config.pageSize
+        if(loadType == LoadType.REFRESH){
+            mainViewModel.clearNewsRemoteKey()
+            mainViewModel.deleteAllNews()
+
+            val prevKey = if (pageState == initialPage) null else pageState - 1
+            val nextKey = if (endOfPaginationReached) null else pageState + 1
+            val keys = response.map {
+                NewsItemRemoteKeys(
+                    newsId = it.newsid,
+                    prevKey = prevKey!!,
+                    nextKey = nextKey!!
+                )
+
+            }
+
+            mainViewModel.insertNewsRemoteKeys(keys)
+            response.map {
+                mainViewModel.insertAllNews(it)
+            }
+        }
+    }
+
+
+    private fun getRemoteKeyForLastItem(state : PagingState<Int,ArticleX>) : NewsItemRemoteKeys? {
+        val state = state.lastItemOrNull()?.let {
+            mainViewModel.getNewsItemPerId(it.newsid!!)
+        }
+
+        return state
+    }
+
+
+    // TODO : we can get the NewsRemoteKeys which points to the current item at this scroll position,
+    //  so the value of (nextKey – 1) will actually be current page that we need to refresh.
+
+    private fun getRemoteKeyClosestToCurrentPosition(state : PagingState<Int,ArticleX>) : NewsItemRemoteKeys? {
+        val state  = state.anchorPosition.let {
+           state.closestItemToPosition(it!!)?.newsid.let {
+               mainViewModel.getNewsItemPerId(it!!)
+           }
+        }
+        return state
+    }
+}
+
+/*
 
     private var page = 1
     private var  isRequestInProgress = false
@@ -62,4 +131,4 @@ class BoundaryCallBackNews(var newsDao: NewsDao,
                     }
                 })
     }
-}
+ */

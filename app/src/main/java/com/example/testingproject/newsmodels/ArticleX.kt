@@ -11,10 +11,8 @@ data class ArticleX(
     val description: String,
     val publishedAt: String,
     val title: String,
-    val urlToImage: String
-) {
+    val urlToImage: String,
     @PrimaryKey(autoGenerate = true)
     @NotNull
-    var newsid : Int? = null
-
-}
+    var newsid : Long? = null
+)

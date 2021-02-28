@@ -1,4 +1,4 @@
-package com.example.testingproject.fragments
+package com.example.testingproject.ui.fragments
 
 import android.app.Activity.RESULT_OK
 import android.app.SearchManager
@@ -19,18 +19,22 @@ import androidx.cursoradapter.widget.SimpleCursorAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.testingproject.*
 import com.example.testingproject.databinding.AllnewsLayoutBinding
-import com.example.testingproject.favnews.FavNewsActivity
+import com.example.testingproject.ui.FavNewsActivity
 import com.example.testingproject.models.SuggestionsModel
-import com.example.testingproject.newsdetails.NewsDetailsActivity
+import com.example.testingproject.ui.NewsDetailsActivity
 import com.example.testingproject.newslistener.NewsOnListener
 import com.example.testingproject.newsmodels.NewsModel
 import com.example.testingproject.recyclers.NewsAdapter
-import com.example.testingproject.viewmodel.MainViewModel
+import com.example.testingproject.ui.SettingsActivity
+import com.example.testingproject.mvvm.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
+import timber.log.Timber
 import java.util.*
 
 
@@ -41,11 +45,7 @@ class NewsFragment : Fragment() {
     private  val mainViewModel: MainViewModel by viewModels()
     private lateinit var binding : AllnewsLayoutBinding
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = AllnewsLayoutBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -86,7 +86,7 @@ class NewsFragment : Fragment() {
         }
         binding.deleteMenu.setOnClickListener {
             BottomDialog().apply {
-                show(requireFragmentManager(), "Suggestions Deletion")
+                show(parentFragmentManager, "Suggestions Deletion")
                 binding.fabMenu.collapse()
             }
         }
@@ -190,17 +190,15 @@ class NewsFragment : Fragment() {
         return true
     }
     private fun fetchData(query: String) {
-        mainViewModel.getAll(query, Utils.API_KEY, 1).observe(
-            viewLifecycleOwner,
-            Observer { pagedList ->
-                if (pagedList != null) {
-                    binding.newsNoPost.visibility = View.INVISIBLE
-                    newsAdapter.submitList(pagedList)
-                    binding.newsRecycler.adapter = newsAdapter
-                } else {
-                    binding.newsNoPost.visibility = View.VISIBLE
-                }
-            })
+        lifecycleScope.launchWhenStarted {
+            mainViewModel.getNews(query,Utils.API_KEY).collect { pagedList ->
+                Timber.d("PagedList Size $pagedList.size")
+                binding.newsNoPost.visibility = View.INVISIBLE
+                newsAdapter.submitData(pagedList)
+                binding.newsRecycler.adapter = newsAdapter
+            }
+        }
+
     }
     private fun voiceSearch() {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)

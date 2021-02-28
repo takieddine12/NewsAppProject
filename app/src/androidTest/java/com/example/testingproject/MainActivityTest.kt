@@ -2,13 +2,8 @@ package com.example.testingproject
 
 import android.view.Gravity
 import android.view.View
-import android.widget.ActionMenuView
-import android.widget.TableLayout
-import androidx.test.InstrumentationRegistry.getInstrumentation
-import androidx.test.InstrumentationRegistry.getTargetContext
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
 import androidx.test.espresso.PerformException
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
@@ -19,12 +14,10 @@ import androidx.test.espresso.contrib.DrawerMatchers.isClosed
 import androidx.test.espresso.contrib.NavigationViewActions
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
-import androidx.test.platform.app.InstrumentationRegistry
+import com.example.testingproject.ui.MainActivity
 import com.google.android.material.tabs.TabLayout
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
-import org.hamcrest.core.AllOf
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 

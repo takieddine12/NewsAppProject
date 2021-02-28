@@ -7,6 +7,7 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import com.example.testingproject.R
+import com.example.testingproject.ui.LottieActivity
 import org.junit.Test
 import org.junit.runner.RunWith
 

@@ -1,10 +1,8 @@
 package com.example.testingproject.di
 
 import android.content.Context
-import android.provider.DocumentsContract
 import androidx.room.Room
-import com.example.testingproject.apirequest.ApiResponse
-import com.example.testingproject.room.NewsDao
+import com.example.testingproject.webauth.ApiResponse
 import com.example.testingproject.room.NewsDatabase
 import dagger.Module
 import dagger.Provides
@@ -44,20 +42,30 @@ object AppModule {
     fun provideDatabase(@ApplicationContext context: Context)  =
         Room.databaseBuilder(context.applicationContext,NewsDatabase::class.java,
         "news.db").fallbackToDestructiveMigration().build()
+//
+//    @Singleton
+//    @Provides
+//    fun provideFavNewsDao(newsDatabase: NewsDatabase) = newsDatabase.favNewsDao()
+//
+//    @Singleton
+//    @Provides
+//    fun provideSuggestionsDao(newsDatabase: NewsDatabase) = newsDatabase.suggestionsDao()
+//
+//    @Singleton
+//    @Provides
+//    fun provideHeadLinesDao(newsDatabase: NewsDatabase) = newsDatabase.headlinesDao()
+//
+//    @Singleton
+//    @Provides
+//    fun provideNewsDao(newsDatabase: NewsDatabase) = newsDatabase.newsDao()
+//
+//    @Singleton
+//    @Provides
+//    fun provideHeadlinesRemoteKeyDao(newsDatabase: NewsDatabase)  = newsDatabase.headlinesRemoteKey()
+//
+//    @Singleton
+//    @Provides
+//    fun provideNewsRemoteKeyDao(newsDatabase: NewsDatabase)  = newsDatabase.newsRemoteKey()
+//
 
-    @Singleton
-    @Provides
-    fun provideFavNewsDao(newsDatabase: NewsDatabase) = newsDatabase.favNewsDao()
-
-    @Singleton
-    @Provides
-    fun provideSuggestionsDao(newsDatabase: NewsDatabase) = newsDatabase.suggestionsDao()
-
-    @Singleton
-    @Provides
-    fun provideHeadLinesDao(newsDatabase: NewsDatabase) = newsDatabase.headlinesDao()
-
-    @Singleton
-    @Provides
-    fun provideNewsDao(newsDatabase: NewsDatabase) = newsDatabase.newsDao()
 }

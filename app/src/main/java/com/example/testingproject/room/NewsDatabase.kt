@@ -6,6 +6,8 @@ import com.example.testingproject.models.SuggestionsModel
 import com.example.testingproject.newsmodels.Article
 import com.example.testingproject.newsmodels.ArticleX
 import com.example.testingproject.newsmodels.NewsModel
+import com.example.testingproject.room.pagingationDao.HeadlinesRemoteKeyDao
+import com.example.testingproject.room.pagingationDao.NewsRemoteKeyDao
 
 @Database(entities = [FavNewsModel::class,SuggestionsModel::class,Article::class,ArticleX::class],version = 1,exportSchema = false)
 abstract class NewsDatabase : RoomDatabase() {
@@ -14,5 +16,7 @@ abstract class NewsDatabase : RoomDatabase() {
     abstract fun suggestionsDao() : SuggestionsDao
     abstract fun headlinesDao() : HeadlinesDao
     abstract fun newsDao() : NewsDao
+    abstract fun headlinesRemoteKey() : HeadlinesRemoteKeyDao
+    abstract fun newsRemoteKey() : NewsRemoteKeyDao
 
 }

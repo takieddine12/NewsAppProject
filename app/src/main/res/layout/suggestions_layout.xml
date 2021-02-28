@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@android:color/white"
-        tools:context=".MainActivity">
+        tools:context=".ui.MainActivity">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/item_label"

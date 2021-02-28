@@ -1,4 +1,4 @@
-package com.example.testingproject.splash
+package com.example.testingproject.ui
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -19,7 +19,7 @@ class LottieActivity : AppCompatActivity() {
 
         CoroutineScope(Dispatchers.Main).launch {
             delay(3000)
-            Intent(this@LottieActivity,SplashActivity::class.java).apply {
+            Intent(this@LottieActivity, SplashActivity::class.java).apply {
                 startActivity(this)
                 finish()
             }

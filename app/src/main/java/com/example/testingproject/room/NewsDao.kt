@@ -1,5 +1,6 @@
 package com.example.testingproject.room
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -11,9 +12,13 @@ import com.example.testingproject.newsmodels.NewsModel
 interface NewsDao {
 
     @Query("SELECT * FROM newstable ORDER BY newsid ")
-    fun getNews() : androidx.paging.DataSource.Factory<Int,ArticleX>
+    fun getAllNews() : PagingSource<Int,ArticleX>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun persistNews(list: ArticleX)
+
+    @Query("DELETE FROM newsTable")
+    fun deleteAllNews()
+
 
 }

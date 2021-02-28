@@ -14,12 +14,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SettingsActivity"/>
-        <activity android:name=".splash.SplashActivity" />
-        <activity android:name=".newsdetails.NewsDetailsActivity" />
-        <activity android:name=".favnews.FavNewsActivity" />
-        <activity android:name=".MainActivity" />
-        <activity android:name=".splash.LottieActivity">
+        <activity android:name=".ui.SettingsActivity"/>
+        <activity android:name=".ui.SplashActivity" />
+        <activity android:name=".ui.NewsDetailsActivity" />
+        <activity android:name=".ui.FavNewsActivity" />
+        <activity android:name=".ui.MainActivity" />
+        <activity android:name=".ui.LottieActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

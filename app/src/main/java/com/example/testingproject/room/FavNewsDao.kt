@@ -8,15 +8,15 @@ import com.example.testingproject.models.FavNewsModel
 interface FavNewsDao {
 
     @Query("SELECT * FROM fav_table")
-    fun getAllNews() : LiveData<List<FavNewsModel>>
+    fun getAllFavNews() : LiveData<List<FavNewsModel>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertNews(favNewsModel: FavNewsModel)
+    suspend fun insertFavNews(favNewsModel: FavNewsModel)
 
     @Delete
-    suspend fun deletePerNews(favNewsModel: FavNewsModel)
+    suspend fun deletePerFavNews(favNewsModel: FavNewsModel)
 
     @Query("DELETE FROM fav_table")
-    suspend fun deleteAllNews()
+    suspend fun deleteAllFavNews()
 
 }
