@@ -22,11 +22,10 @@ class BoundaryCallBackNews(
     var apiResponse: ApiResponse,
     var query : String,
     var mainViewModel: MainViewModel) :
-    RemoteMediator<Int,ArticleX>() {
+    RemoteMediator<Int,NewsModel>() {
 
     private val initialPage : Int = 1
-
-    override suspend fun load(loadType: LoadType, state: PagingState<Int, ArticleX>): MediatorResult {
+    override suspend fun load(loadType: LoadType, state: PagingState<Int, NewsModel>): MediatorResult {
         val pageState = when(loadType){
             LoadType.REFRESH -> {
                 val remoteKeys = getRemoteKeyClosestToCurrentPosition(state = state)
@@ -67,68 +66,18 @@ class BoundaryCallBackNews(
 
         return MediatorResult.Success(endOfPaginationReached)
     }
-
-
-    private fun getRemoteKeyForLastItem(state : PagingState<Int,ArticleX>) : NewsItemRemoteKeys? {
+    private fun getRemoteKeyForLastItem(state : PagingState<Int,NewsModel>) : NewsItemRemoteKeys? {
         return state.lastItemOrNull()?.let {
-            mainViewModel.getNewsItemPerId(it.newsid!!)
+            it.articles.map {
+                mainViewModel.getNewsItemPerId(it.newsid!!)
+            }
         }
     }
-
-
-    // TODO : we can get the NewsRemoteKeys which points to the current item at this scroll position,
-    //  so the value of (nextKey – 1) will actually be current page that we need to refresh.
-
-    private fun getRemoteKeyClosestToCurrentPosition(state : PagingState<Int,ArticleX>) : NewsItemRemoteKeys? {
+    private fun getRemoteKeyClosestToCurrentPosition(state : PagingState<Int,NewsModel>) : NewsItemRemoteKeys? {
        return state.anchorPosition?.let {
-           state.closestItemToPosition(it)?.newsid?.let {
-               mainViewModel.getNewsItemPerId(it!!)
+           state.closestItemToPosition(it).articles.map {
+               it.newsid?.let { mainViewModel.getNewsItemPerId(it!!) }
            }
         }
     }
 }
-
-/*
-
-    private var page = 1
-    private var  isRequestInProgress = false
-    override fun onZeroItemsLoaded() {
-        super.onZeroItemsLoaded()
-        saveNews(query)
-    }
-    override fun onItemAtEndLoaded(itemAtEnd: NewsModel) {
-        super.onItemAtEndLoaded(itemAtEnd)
-        saveNews(query)
-
-    }
-    override fun onItemAtFrontLoaded(itemAtFront: NewsModel) {
-        super.onItemAtFrontLoaded(itemAtFront)
-        saveNews(query)
-    }
-    private fun saveNews(query : String) = CoroutineScope(Dispatchers.IO).launch {
-            page++
-            mainViewModel.getAllNews(query, Utils.API_KEY,page)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .toObservable()
-                .subscribe(object : Observer<NewsModel>{
-                    override fun onSubscribe(d: Disposable) {
-
-                    }
-                    override fun onNext(t: NewsModel) {
-                        launch(Dispatchers.IO) {
-                            t.articles.map {
-                                newsDao.persistNews(it)
-                                isRequestInProgress = true
-                            }
-                        }
-                    }
-                    override fun onError(e: Throwable) {
-                        Log.d("CallBack Headlines","Error Headlines${e.localizedMessage}")
-                    }
-                    override fun onComplete() {
-
-                    }
-                })
-    }
- */

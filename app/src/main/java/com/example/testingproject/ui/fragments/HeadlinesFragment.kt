@@ -78,15 +78,15 @@ class HeadlinesFragment : Fragment() {
         if(Utils.checkConnectivity(requireContext())){
             fetchData()
         } else {
-//             mainViewModel.observeHeadlines().observe(viewLifecycleOwner, Observer {
-//                if(!it.isNullOrEmpty()){
-//                    binding.headlinesNoPost.visibility = View.INVISIBLE
-//                    headlinesAdapter.submitList(it)
-//                    binding.headlinesRecycler.adapter = headlinesAdapter
-//                } else {
-//                    binding.headlinesNoPost.visibility = View.VISIBLE
-//                }
-//           })
+            lifecycleScope.launchWhenStarted {
+                mainViewModel.getOfflineHeadlines().collect {
+                    binding.headlinesNoPost.visibility = View.INVISIBLE
+                    headlinesAdapter.submitData(it)
+                   binding.headlinesRecycler.adapter = headlinesAdapter
+                }
+            }
+
+
         }
 
         binding.deleteMenu.setOnClickListener {

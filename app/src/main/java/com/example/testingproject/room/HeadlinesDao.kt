@@ -13,7 +13,7 @@ import com.example.testingproject.newsmodels.HeadlinesModel
 interface HeadlinesDao {
 
     @Query("SELECT * FROM  headlinesTable ORDER by headlinesId")
-     fun getAllHeadlines() : PagingSource<Int, Article>
+     fun getAllHeadlines() : PagingSource<Int, HeadlinesModel>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
      suspend fun insertHeadlines(list: Article)

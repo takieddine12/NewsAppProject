@@ -26,12 +26,14 @@ import javax.inject.Inject
 
 
 @HiltViewModel
+@ExperimentalPagingApi
 class MainViewModel @Inject constructor(
     private var apiResponse: ApiResponse,
     private var newsRepository: NewsRepository)
     : ViewModel() {
 
-    @ExperimentalPagingApi
+
+    ///-----Online
     fun getNews(query: String, apiKey: String): Flow<PagingData<NewsModel>> {
       return Pager(
           config = getConfig(),
@@ -40,10 +42,6 @@ class MainViewModel @Inject constructor(
       }.flow
           .cachedIn(viewModelScope)
     }
-
-
-
-    @ExperimentalPagingApi
     fun getHeadLines(country: String, apiKey: String): Flow<PagingData<HeadlinesModel>> {
          return Pager(
              config = getConfig(),
@@ -51,6 +49,22 @@ class MainViewModel @Inject constructor(
              HeadlinesSourceFactory(apiResponse,country,apiKey)
          }.flow.cachedIn(viewModelScope)
     }
+
+    //-----Offline
+    fun getOfflineNews() : Flow<PagingData<NewsModel>> {
+        return Pager(
+            config = getConfig()){
+             newsRepository.getAllNews()
+        }.flow.cachedIn(viewModelScope)
+    }
+
+    fun getOfflineHeadlines() : Flow<PagingData<HeadlinesModel>> {
+        return Pager(config = getConfig()){
+            newsRepository.getAllHeadlines()
+        }.flow.cachedIn(viewModelScope)
+    }
+
+
 
 
     // TODO : Dao Headlines Section

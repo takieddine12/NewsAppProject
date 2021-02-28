@@ -75,17 +75,13 @@ class NewsFragment : Fragment() {
         if(Utils.checkConnectivity(requireContext())) {
             fetchData("italy")
         } else {
-        //     mainViewModel.observeChanges().observe(viewLifecycleOwner, Observer {
-//                 if(!it.isNullOrEmpty()){
-//                     binding.newsNoPost.visibility = View.INVISIBLE
-//                     newsAdapter.submitList(it)
-//                     binding.newsRecycler.adapter = newsAdapter
-//                 } else {
-//                     binding.newsNoPost.visibility = View.VISIBLE
-//                 }
-//                    requireContext().showErrorToast("Error Retreiving Data...")
-                //   })
-                //   }
+            lifecycleScope.launchWhenStarted {
+                mainViewModel.getOfflineNews().collect {
+                    binding.newsNoPost.visibility = View.INVISIBLE
+                     newsAdapter.submitData(it)
+                     binding.newsRecycler.adapter = newsAdapter
+                }
+            }
         }
         binding.deleteMenu.setOnClickListener {
             BottomDialog().apply {

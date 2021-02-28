@@ -26,11 +26,10 @@ class BoundaryCallBackHeadlines(
     var country : String,
     var mainViewModel: MainViewModel,
     var apiResponse: ApiResponse) :
-    RemoteMediator<Int,Article>() {
+    RemoteMediator<Int,HeadlinesModel>() {
 
     private var initialPage : Int = 1
-
-    override suspend fun load(loadType: LoadType, state: PagingState<Int, Article>): MediatorResult {
+    override suspend fun load(loadType: LoadType, state: PagingState<Int, HeadlinesModel>): MediatorResult {
         // TODO : Pushing Data Into Database
         val page = when(loadType) {
             LoadType.REFRESH -> {
@@ -72,78 +71,21 @@ class BoundaryCallBackHeadlines(
 
         return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
     }
-
-    // outside of load function
-    private  fun getRemoteKeyForLastItem(state: PagingState<Int, Article>): NewsItemRemoteKeys? {
+    private  fun getRemoteKeyForLastItem(state: PagingState<Int, HeadlinesModel>): NewsItemRemoteKeys? {
       return  state.lastItemOrNull()?.let {
-             mainViewModel.getHeadlinesItemPerId(it.headlinesId!!)
+             it.articles.map {
+                 mainViewModel.getHeadlinesItemPerId(it.headlinesId!!)
+             }
+
       }
     }
-
-
-    // TODO : we can get the NewsRemoteKeys which points to the current item at this scroll position,
-    //  so the value of (nextKey – 1) will actually be current page that we need to refresh.
-    private  fun getRemoteKeyClosestToCurrentPosition(state: PagingState<Int, Article>): NewsItemRemoteKeys? {
+    private  fun getRemoteKeyClosestToCurrentPosition(state: PagingState<Int, HeadlinesModel>): NewsItemRemoteKeys? {
         return state.anchorPosition?.let {
-           state.closestItemToPosition(anchorPosition = it)?.headlinesId?.let {
-               mainViewModel.getHeadlinesItemPerId(it)
-           }
+            state.closestItemToPosition(anchorPosition = it)?.articles?.map {
+                it.headlinesId?.let {
+                    mainViewModel.getHeadlinesItemPerId(it)
+                }
+            }
        }
     }
-
 }
-
-
-/*
-
-class BoundaryCallBackHeadlines(var headlinesDao: HeadlinesDao,
-                                var country : String,
-                                var mainViewModel: MainViewModel) :
-    PagedList.BoundaryCallback<HeadlinesModel>() {
-    private var page = 1
-    private var  isRequestInProgress = false
-    override fun onZeroItemsLoaded() {
-        super.onZeroItemsLoaded()
-        saveHeadlines(country)
-
-    }
-    override fun onItemAtFrontLoaded(itemAtFront: HeadlinesModel) {
-        super.onItemAtFrontLoaded(itemAtFront)
-        saveHeadlines(country)
-    }
-
-    override fun onItemAtEndLoaded(itemAtEnd: HeadlinesModel) {
-        super.onItemAtEndLoaded(itemAtEnd)
-        saveHeadlines(country)
-
-    }
-
-    private fun saveHeadlines(country : String) = CoroutineScope(Dispatchers.IO).launch{
-        page++
-        mainViewModel.getAllHeadlines(country, Utils.API_KEY, page)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .toObservable()
-                .subscribe(object : Observer<HeadlinesModel>{
-                    override fun onSubscribe(d: Disposable) {
-
-                    }
-                    override fun onNext(t: HeadlinesModel) {
-                        launch (Dispatchers.IO){
-                            t.articles.map {
-                                headlinesDao.storeHeadlines(it)
-                                isRequestInProgress = true
-                            }
-                        }
-                    }
-                    override fun onError(e: Throwable) {
-                      Log.d("CallBack Headlines","Error Headlines${e.localizedMessage}")
-                    }
-
-                    override fun onComplete() {
-
-                    }
-                })
-    }
-}
- */

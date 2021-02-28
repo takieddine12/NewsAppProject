@@ -12,7 +12,7 @@ import com.example.testingproject.newsmodels.NewsModel
 interface NewsDao {
 
     @Query("SELECT * FROM newstable ORDER BY newsid ")
-    fun getAllNews() : PagingSource<Int,ArticleX>
+    fun getAllNews() : PagingSource<Int,NewsModel>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun persistNews(list: ArticleX)
