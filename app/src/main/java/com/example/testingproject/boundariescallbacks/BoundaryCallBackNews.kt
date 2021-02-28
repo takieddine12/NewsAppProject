@@ -20,10 +20,12 @@ import kotlinx.coroutines.launch
 @ExperimentalPagingApi
 class BoundaryCallBackNews(
     var apiResponse: ApiResponse,
-    val initialPage : Int = 1,
     var query : String,
     var mainViewModel: MainViewModel) :
     RemoteMediator<Int,ArticleX>() {
+
+    private val initialPage : Int = 1
+
     override suspend fun load(loadType: LoadType, state: PagingState<Int, ArticleX>): MediatorResult {
         val pageState = when(loadType){
             LoadType.REFRESH -> {
@@ -46,32 +48,31 @@ class BoundaryCallBackNews(
         if(loadType == LoadType.REFRESH){
             mainViewModel.clearNewsRemoteKey()
             mainViewModel.deleteAllNews()
-
-            val prevKey = if (pageState == initialPage) null else pageState - 1
-            val nextKey = if (endOfPaginationReached) null else pageState + 1
-            val keys = response.map {
-                NewsItemRemoteKeys(
-                    newsId = it.newsid,
-                    prevKey = prevKey!!,
-                    nextKey = nextKey!!
-                )
-
-            }
-
-            mainViewModel.insertNewsRemoteKeys(keys)
-            response.map {
-                mainViewModel.insertAllNews(it)
-            }
         }
+
+        val prevKey = if (pageState == initialPage) null else pageState - 1
+        val nextKey = if (endOfPaginationReached) null else pageState + 1
+        val keys = response.map {
+            NewsItemRemoteKeys(
+                newsId = it.newsid,
+                prevKey = prevKey!!,
+                nextKey = nextKey!!
+            )
+        }
+
+        mainViewModel.insertNewsRemoteKeys(keys)
+        response.map {
+            mainViewModel.insertAllNews(it)
+        }
+
+        return MediatorResult.Success(endOfPaginationReached)
     }
 
 
     private fun getRemoteKeyForLastItem(state : PagingState<Int,ArticleX>) : NewsItemRemoteKeys? {
-        val state = state.lastItemOrNull()?.let {
+        return state.lastItemOrNull()?.let {
             mainViewModel.getNewsItemPerId(it.newsid!!)
         }
-
-        return state
     }
 
 
@@ -79,12 +80,11 @@ class BoundaryCallBackNews(
     //  so the value of (nextKey – 1) will actually be current page that we need to refresh.
 
     private fun getRemoteKeyClosestToCurrentPosition(state : PagingState<Int,ArticleX>) : NewsItemRemoteKeys? {
-        val state  = state.anchorPosition.let {
-           state.closestItemToPosition(it!!)?.newsid.let {
+       return state.anchorPosition?.let {
+           state.closestItemToPosition(it)?.newsid?.let {
                mainViewModel.getNewsItemPerId(it!!)
            }
         }
-        return state
     }
 }
 

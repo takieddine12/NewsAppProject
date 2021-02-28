@@ -15,58 +15,42 @@ import com.example.testingproject.newsmodels.HeadlinesModel
 import com.example.testingproject.newsmodels.NewsModel
 import com.example.testingproject.paging.HeadlinesSource.HeadlinesSourceFactory
 import com.example.testingproject.paging.NewsSource.NewsDataSource
+import com.example.testingproject.webauth.ApiResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.Flowable
 import io.reactivex.Single
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
+    private var apiResponse: ApiResponse,
     private var newsRepository: NewsRepository)
     : ViewModel() {
 
     @ExperimentalPagingApi
     fun getNews(query: String, apiKey: String): Flow<PagingData<NewsModel>> {
-       return Pager(config = getConfig(),
-           initialKey = 1,
-           BoundaryCallBackNews(initialPage = 1,query = query,mainViewModel = this)){
-            NewsDataSource(apiResponse = newsRepository.apiResponse,query = query,apikey = apiKey)
-        }.flow
-            .cachedIn(viewModelScope)
-
+      return Pager(
+          config = getConfig(),
+          remoteMediator = BoundaryCallBackNews(apiResponse,query,this)){
+          NewsDataSource(apiResponse,query,apiKey)
+      }.flow
+          .cachedIn(viewModelScope)
     }
+
+
+
     @ExperimentalPagingApi
     fun getHeadLines(country: String, apiKey: String): Flow<PagingData<HeadlinesModel>> {
-           return Pager(config = getConfig(),
-               initialKey = 1,
-               BoundaryCallBackHeadlines(initialPage = 1,country = country,mainViewModel = this)){
-               HeadlinesSourceFactory(apiResponse = newsRepository.apiResponse
-               ,country = country,apiKey = apiKey)
-           }.flow
-               .cachedIn(viewModelScope)
+         return Pager(
+             config = getConfig(),
+             remoteMediator = BoundaryCallBackHeadlines(country,this,apiResponse)){
+             HeadlinesSourceFactory(apiResponse,country,apiKey)
+         }.flow.cachedIn(viewModelScope)
     }
-
-
-//    // TODO : ROOM DATABASE OPERATIONS
-//    fun observeChanges(): LiveData<PagedList<ArticleX>> {
-//        val config = PagedList.Config.Builder()
-//            .setPageSize(Utils.CACHE_PAGE_SIZE)
-//            .build()
-//
-//        return  LivePagedListBuilder(newsRepository.restoreNews(), config).build()
-//
-//    }
-//    fun observeHeadlines(): LiveData<PagedList<Article>> {
-//        val config = PagedList.Config.Builder()
-//            .setPageSize(Utils.CACHE_PAGE_SIZE)
-//            .build()
-//
-//        return  LivePagedListBuilder(newsRepository.restoreHeadlines(), config).build()
-//
-//    }
 
 
     // TODO : Dao Headlines Section
@@ -112,7 +96,7 @@ class MainViewModel @Inject constructor(
      fun clearHeadlinesRemoteKey() = newsRepository.clearHeadlinesKeys()
      fun getNewsItemPerId(key : Long) = newsRepository.getNewsPerId(key)
      fun getHeadlinesItemPerId(key : Long) = newsRepository.getHeadlinesItemPerId(key)
-    private fun getConfig() : PagingConfig {
+     private fun getConfig() : PagingConfig {
         return PagingConfig(
             pageSize = 10,
             prefetchDistance = 2,
@@ -120,6 +104,7 @@ class MainViewModel @Inject constructor(
             initialLoadSize = 5
         )
     }
+
 
 }
 

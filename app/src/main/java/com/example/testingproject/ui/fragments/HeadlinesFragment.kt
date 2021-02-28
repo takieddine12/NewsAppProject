@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.ExperimentalPagingApi
 import androidx.recyclerview.widget.GridLayoutManager
 import com.barisatalay.filterdialog.FilterDialog
 import com.barisatalay.filterdialog.model.DialogListener
@@ -43,6 +44,7 @@ import java.util.*
 
 
 @AndroidEntryPoint
+@ExperimentalPagingApi
 class HeadlinesFragment : Fragment() {
 
      private lateinit var headlinesAdapter: HeadLinesAdapter
@@ -53,6 +55,7 @@ class HeadlinesFragment : Fragment() {
         binding = TopheadlinesLayoutBinding.inflate(inflater,container,false)
         return binding.root
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.headlinesRecycler.layoutManager = GridLayoutManager(requireContext(),2)
@@ -105,6 +108,7 @@ class HeadlinesFragment : Fragment() {
             }
         }
     }
+
     private fun fetchData() {
            lifecycleScope.launchWhenStarted {
                mainViewModel.getHeadLines("us",Utils.API_KEY).collect { pagedList ->
@@ -119,6 +123,7 @@ class HeadlinesFragment : Fragment() {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
     }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.filter_menu,menu)
@@ -177,6 +182,7 @@ class HeadlinesFragment : Fragment() {
             }
         })
     }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
             R.id.language -> {
@@ -188,6 +194,7 @@ class HeadlinesFragment : Fragment() {
         }
         return true
     }
+
     private fun showFilterDialog() {
 
         FilterDialog(activity).apply {
@@ -227,6 +234,7 @@ class HeadlinesFragment : Fragment() {
            return this
        }
     }
+
     private fun fetchData(query: String) {
 
         lifecycleScope.launchWhenStarted {

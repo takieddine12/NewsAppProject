@@ -82,7 +82,7 @@ class FavNewsActivity : AppCompatActivity() {
                 return false
             }
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                mainViewModel!!.deletePerNews(list!![viewHolder.adapterPosition])
+                mainViewModel!!.deletePerFavNews(list!![viewHolder.adapterPosition])
                 this@FavNewsActivity.showToast(getString(R.string.articlessuccessfullydeleted))
             }
         }

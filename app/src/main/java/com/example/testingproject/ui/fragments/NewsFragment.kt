@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.ExperimentalPagingApi
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.testingproject.*
 import com.example.testingproject.databinding.AllnewsLayoutBinding
@@ -39,6 +40,7 @@ import java.util.*
 
 
 @AndroidEntryPoint
+@ExperimentalPagingApi
 class NewsFragment : Fragment() {
 
     private lateinit var newsAdapter: NewsAdapter
@@ -49,6 +51,7 @@ class NewsFragment : Fragment() {
         binding = AllnewsLayoutBinding.inflate(inflater, container, false)
         return binding.root
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -107,6 +110,7 @@ class NewsFragment : Fragment() {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
     }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu1, menu) //menu1
@@ -189,6 +193,7 @@ class NewsFragment : Fragment() {
         }
         return true
     }
+
     private fun fetchData(query: String) {
         lifecycleScope.launchWhenStarted {
             mainViewModel.getNews(query,Utils.API_KEY).collect { pagedList ->
@@ -211,6 +216,7 @@ class NewsFragment : Fragment() {
         startActivityForResult(intent, SEARCH_REQUEST_CODE)
 
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == SEARCH_REQUEST_CODE && resultCode == RESULT_OK) {

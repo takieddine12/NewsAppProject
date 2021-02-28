@@ -11,4 +11,4 @@ data class NewsItemRemoteKeys (
     val newsId : Long?,
     val prevKey : Int,
     val nextKey : Int
-        )
+    )
