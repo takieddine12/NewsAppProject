@@ -23,6 +23,7 @@
         android:layout_gravity="center"
         android:fontFamily="@font/rubik_medium"
         android:gravity="center"
+           android:visibility="gone"
         android:text="@string/no_data_found"
         android:textSize="19sp" />
         <com.getbase.floatingactionbutton.FloatingActionsMenu

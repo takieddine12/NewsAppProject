@@ -51,6 +51,10 @@ dependencies {
 
     def paging_version = "3.0.0-beta01"
 
+
+    //Shape Porter Library
+    implementation 'com.github.siyamed:android-shape-imageview:0.9.+@aar'
+
     //--HttpLoggingInterceptor
     implementation"com.squareup.okhttp3:logging-interceptor:4.6.0"
 

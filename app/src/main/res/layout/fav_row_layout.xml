@@ -18,70 +18,72 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <LinearLayout
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:layout_height="160dp"
+            app:cardCornerRadius="4dp"
+            app:cardElevation="12dp">
 
-            <ImageView
-                android:layout_width="3dp"
-                android:layout_height="85dp"
-                android:layout_marginStart="3dp"
-                android:background="@color/redColor" />
-            <ImageView
-                android:id="@+id/imageView2"
+            <com.github.siyamed.shapeimageview.mask.PorterShapeImageView
                 android:layout_width="140dp"
-                android:layout_height="85dp"
-                android:layout_marginStart="4dp"
+                android:layout_height="match_parent"
                 app:general="@{news.urlToImage}"
+                app:siSquare="false"
+                app:siShape="@drawable/ic_favdesign"
                 android:background="@drawable/placeholder"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_marginStart="150dp">
+
 
                 <TextView
                     android:id="@+id/news_title"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
+                    android:layout_height="65dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="4dp"
                     android:ellipsize="end"
                     android:gravity="center"
-                    android:maxLines="1"
+                    android:maxLines="3"
                     android:text="@{news.title}"
                     android:textSize="13sp"
                     app:layout_constraintBottom_toTopOf="@+id/guideline5"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
 
                 <TextView
                     android:id="@+id/news_author"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="4dp"
                     android:ellipsize="end"
                     android:gravity="center"
                     android:maxLines="1"
                     android:text="@{news.author}"
                     android:textSize="13sp"
-                    app:layout_constraintBottom_toTopOf="@+id/news_publishedat"
+                    app:layout_constraintBottom_toTopOf="@+id/guideline6"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/guideline5"
-                    app:layout_constraintVertical_bias="0.083" />
+                    app:layout_constraintTop_toTopOf="@+id/guideline5" />
+
 
                 <TextView
                     android:id="@+id/news_publishedat"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp"
                     android:ellipsize="end"
                     android:gravity="center"
                     android:maxLines="1"
@@ -89,9 +91,10 @@
                     android:textSize="13sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/guideline6"
-                    app:layout_constraintVertical_bias="0.0" />
+                    app:layout_constraintVertical_bias="0.272" />
 
                 <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/guideline5"
@@ -99,17 +102,19 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     app:layout_constraintGuide_begin="20dp"
-                    app:layout_constraintGuide_percent="0.34" />
+                    app:layout_constraintGuide_percent="0.54" />
 
                 <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/guideline6"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    app:layout_constraintGuide_percent="0.66"
+                    app:layout_constraintGuide_percent="0.75"
                     app:layout_constraintGuide_begin="20dp" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
-        </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
 
     </androidx.cardview.widget.CardView>
 </layout>
