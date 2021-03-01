@@ -9,12 +9,21 @@ import android.os.Bundle
 import android.os.LocaleList
 import android.util.DisplayMetrics
 import android.view.ViewGroup
+import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
+import androidx.paging.ExperimentalPagingApi
 import com.example.testingproject.R
 import com.example.testingproject.Utils
 import com.example.testingproject.databinding.ActivityMainBinding
 import com.example.testingproject.extras.Common
+import com.example.testingproject.mvvm.SharedViewModel
 import com.example.testingproject.showWarningToast
+import com.example.testingproject.ui.fragments.HeadlinesFragment
+import com.example.testingproject.ui.fragments.NewsFragment
+import com.example.testingproject.ui.fragments.NewsFragment_GeneratedInjector
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
@@ -22,7 +31,9 @@ import java.util.*
 
 
 @AndroidEntryPoint
+@ExperimentalPagingApi
 class MainActivity : AppCompatActivity() {
+    private lateinit var sharedViewModel: SharedViewModel
     private var _binding : ActivityMainBinding? = null
     private val binding get() = _binding!!
     private var viewPagerAdapter: ViewPagerAdapter? = null
@@ -33,6 +44,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setSupportActionBar(binding.toolbar)
+
+        sharedViewModel = ViewModelProviders.of(this)[SharedViewModel::class.java]
 
         viewPagerAdapter = ViewPagerAdapter(this)
         binding.mainViewPager.adapter = viewPagerAdapter
@@ -55,20 +68,38 @@ class MainActivity : AppCompatActivity() {
             tab.requestLayout()
         }
 
-        binding.refreshLayout.setOnRefreshListener {
-                if(Utils.checkConnectivity(this)) {
-                Intent(this@MainActivity, MainActivity::class.java).apply {
-                    intent.flags = Intent.FLAG_ACTIVITY_NO_ANIMATION
-                    startActivity(intent)
-                }
-                 }else {
-                    binding.refreshLayout.isRefreshing  = false
-                    this@MainActivity.showWarningToast(getString(R.string.networkerror))
-                }
-        }
 
+
+
+        // TODO : Query With SearchView
+
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+               getCurrentVisibleFragment(newText)
+                return true
+            }
+        })
     }
 
+
+    private fun getCurrentVisibleFragment(newText : String?){
+        val list = mutableListOf<Fragment>()
+        list.add(0,NewsFragment())
+        list.add(1,HeadlinesFragment())
+
+        for(i in 0 until list.size){
+            val fragment = list[i]
+            if(fragment is NewsFragment){
+                sharedViewModel.setQuery(newText?.toLowerCase()!!)
+            } else {
+                sharedViewModel.setQuery(newText?.toLowerCase()!!)
+            }
+        }
+    }
     @SuppressLint("ObsoleteSdkInt")
     private fun updateResources(){
         val prefs = getSharedPreferences("prefs", Context.MODE_PRIVATE)

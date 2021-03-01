@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.paging.ExperimentalPagingApi
 import androidx.preference.CheckBoxPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -15,6 +16,7 @@ import com.example.testingproject.R
 import com.example.testingproject.databinding.ActivitySettingsBinding
 import java.util.*
 
+@ExperimentalPagingApi
 class SettingsActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsBinding
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,6 +30,7 @@ class SettingsActivity : AppCompatActivity() {
 
 
     }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {

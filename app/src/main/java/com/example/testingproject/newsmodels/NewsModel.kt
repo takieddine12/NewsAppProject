@@ -7,6 +7,6 @@ import org.jetbrains.annotations.NotNull
 
 data class NewsModel(
     @TypeConverters(NewsTypeConverter::class)
-    var articles: MutableList<ArticleX>? = null
+    var articles: List<ArticleX>? = null
 
 )

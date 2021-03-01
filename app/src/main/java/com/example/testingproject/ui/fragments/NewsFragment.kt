@@ -13,12 +13,15 @@ import android.view.*
 import android.widget.AutoCompleteTextView
 import android.widget.ImageView
 import androidx.appcompat.widget.SearchView
+import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.core.content.ContextCompat
 import androidx.cursoradapter.widget.CursorAdapter
 import androidx.cursoradapter.widget.SimpleCursorAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.ExperimentalPagingApi
 import androidx.recyclerview.widget.GridLayoutManager
@@ -32,6 +35,9 @@ import com.example.testingproject.newsmodels.NewsModel
 import com.example.testingproject.recyclers.NewsAdapter
 import com.example.testingproject.ui.SettingsActivity
 import com.example.testingproject.mvvm.MainViewModel
+import com.example.testingproject.mvvm.SharedViewModel
+import com.example.testingproject.newsmodels.ArticleX
+import com.example.testingproject.ui.fragments.HeadlinesFragment.Companion.SEARCH_REQUEST_CODE
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
@@ -43,6 +49,7 @@ import java.util.*
 @ExperimentalPagingApi
 class NewsFragment : Fragment() {
 
+    private lateinit var sharedViewModel: SharedViewModel
     private lateinit var newsAdapter: NewsAdapter
     private  val mainViewModel: MainViewModel by viewModels()
     private lateinit var binding : AllnewsLayoutBinding
@@ -51,21 +58,22 @@ class NewsFragment : Fragment() {
         binding = AllnewsLayoutBinding.inflate(inflater, container, false)
         return binding.root
     }
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         binding.newsRecycler.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.newsRecycler.setHasFixedSize(true)
 
+        sharedViewModel = ViewModelProviders.of(this)[SharedViewModel::class.java]
+
         newsAdapter = NewsAdapter(object : NewsOnListener {
-            override fun onNewsClicked(allNewsModel: NewsModel, position: Int) {
+            override fun onNewsClicked(allNewsModel: ArticleX) {
                 Intent(requireContext(), NewsDetailsActivity::class.java).apply {
-                    putExtra("author", allNewsModel.articles?.get(position)?.author)
-                    putExtra("title", allNewsModel.articles?.get(position)?.title)
-                    putExtra("description", allNewsModel.articles?.get(position)?.description)
-                    putExtra("imgUrl", allNewsModel.articles?.get(position)?.urlToImage)
-                    putExtra("date", allNewsModel.articles?.get(position)?.publishedAt)
+                    putExtra("author", allNewsModel.author)
+                    putExtra("title", allNewsModel.title)
+                    putExtra("description", allNewsModel?.description)
+                    putExtra("imgUrl", allNewsModel.urlToImage)
+                    putExtra("date", allNewsModel.publishedAt)
                     binding.fabMenu.collapse()
                     startActivity(this)
                 }
@@ -73,13 +81,12 @@ class NewsFragment : Fragment() {
         })
 
         if(Utils.checkConnectivity(requireContext())) {
-           fetchData("italy")
+            fetchData("corona".toLowerCase(Locale.ROOT))
         } else {
             lifecycleScope.launchWhenStarted {
                 mainViewModel.getOfflineNews().collect {
-                    binding.newsNoPost.visibility = View.INVISIBLE
-                    // newsAdapter.submitData()
-                     binding.newsRecycler.adapter = newsAdapter
+                    newsAdapter.submitData(it)
+                    binding.newsRecycler.adapter = newsAdapter
                 }
             }
         }
@@ -101,6 +108,10 @@ class NewsFragment : Fragment() {
                 startActivity(this)
             }
         }
+
+        sharedViewModel.getQuery().observe(viewLifecycleOwner, Observer {
+            fetchData(it.toLowerCase(Locale.ROOT))
+        })
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -110,7 +121,69 @@ class NewsFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu1, menu) //menu1
-        val menuItem = menu.findItem(R.id.newsSearchView).actionView as SearchView
+
+        }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.newsVoice -> {
+                voiceSearch()
+            }
+        }
+        return true
+    }
+    private fun fetchData(query: String) {
+        lifecycleScope.launch {
+              mainViewModel.getNews(query,Utils.API_KEY).collect {
+                newsAdapter.submitData(it)
+                binding.newsRecycler.adapter = newsAdapter
+                  Timber.d("Adapter Count ${newsAdapter.itemCount}")
+            }
+        }
+
+    }
+    private fun voiceSearch() {
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        intent.putExtra(
+            RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+            RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+        )
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Pass a search")
+        startActivityForResult(intent, SEARCH_REQUEST_CODE)
+
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == SEARCH_REQUEST_CODE && resultCode == RESULT_OK) {
+            val voiceList = data!!.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+            for (i in 0 until voiceList!!.size) {
+                fetchData(voiceList[0].toLowerCase(Locale.ROOT))
+            }
+        }
+    }
+    companion object{
+        const val SEARCH_REQUEST_CODE = 1001
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /*
+          //val menuItem = menu.findItem(R.id.newsSearchView).actionView as SearchView
         menuItem.findViewById<ImageView>(androidx.appcompat.R.id.search_button).apply {
             setImageDrawable(ContextCompat.getDrawable(requireContext(),R.drawable.ic_search_black_24dp))
         }
@@ -179,53 +252,4 @@ class NewsFragment : Fragment() {
             override fun onSuggestionSelect(position: Int): Boolean {
                 return false
             }
-        })
-    }
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.newsVoice -> {
-                voiceSearch()
-            }
-        }
-        return true
-    }
-
-    private fun fetchData(query: String) {
-        lifecycleScope.launchWhenStarted {
-//            mainViewModel.getNews(query,Utils.API_KEY).collect { pagedList ->
-//                Timber.d("PagedList Size $pagedList.size")
-//                binding.newsNoPost.visibility = View.INVISIBLE
-//                newsAdapter.submitData(pagedList)
-//                binding.newsRecycler.adapter = newsAdapter
-//            }
-        }
-
-    }
-    private fun voiceSearch() {
-        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-        intent.putExtra(
-            RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-            RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
-        )
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Pass a search")
-        startActivityForResult(intent, SEARCH_REQUEST_CODE)
-
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == SEARCH_REQUEST_CODE && resultCode == RESULT_OK) {
-            val voiceList = data!!.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
-            for (i in 0 until voiceList!!.size) {
-                fetchData(voiceList[0].toLowerCase(Locale.ROOT))
-            }
-        }
-    }
-    companion object{
-        const val SEARCH_REQUEST_CODE = 1001
-    }
-
-}
-
-
+         */

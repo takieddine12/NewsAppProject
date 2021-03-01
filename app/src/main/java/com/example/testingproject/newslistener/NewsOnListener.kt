@@ -5,5 +5,5 @@ import com.example.testingproject.newsmodels.NewsModel
 
 interface NewsOnListener {
 
-    fun onNewsClicked(allNewsModel: NewsModel,position : Int)
+    fun onNewsClicked(allNewsModel: ArticleX)
 }

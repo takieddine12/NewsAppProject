@@ -7,10 +7,8 @@
             type="com.example.testingproject.newslistener.HeadlinesOnListener" />
         <variable
             name="headlines"
-            type="com.example.testingproject.newsmodels.HeadlinesModel" />
-        <variable
-            name="position"
-            type="int" />
+            type="com.example.testingproject.newsmodels.Article" />
+
     </data>
 
     <androidx.cardview.widget.CardView
@@ -35,7 +33,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:onClick="@{() -> listener.headlinesOnClick(headlines,position)}"
+                android:onClick="@{() -> listener.headlinesOnClick(headlines)}"
                 android:orientation="vertical">
 
                 <de.hdodenhof.circleimageview.CircleImageView
@@ -43,7 +41,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="130dp"
                     android:background="@drawable/placeholder"
-                    app:general="@{headlines.articles.get(position).urlToImage}"
+                    app:general="@{headlines.urlToImage}"
                     tools:ignore="ContentDescription" />
 
                 <TextView
@@ -55,7 +53,7 @@
                     android:gravity="center"
                     android:maxLines="1"
                     android:layout_marginTop="5dp"
-                    android:text="@{headlines.articles.get(position).title}"
+                    android:text="@{headlines.title}"
                     android:textSize="12sp"
                     />
 
@@ -69,7 +67,7 @@
                     android:gravity="center"
                     android:maxLines="3"
                     android:layout_marginTop="5dp"
-                    android:text="@{headlines.articles.get(position).description}"
+                    android:text="@{headlines.description}"
                     android:textSize="12sp"
                     />
 
@@ -83,7 +81,7 @@
                     android:gravity="center"
                     android:maxLines="1"
                     android:layout_marginTop="5dp"
-                    android:text="@{headlines.articles.get(position).author}"
+                    android:text="@{headlines.author}"
                     android:textSize="12sp"
                     />
 
@@ -96,7 +94,7 @@
                     android:gravity="center"
                     android:maxLines="1"
                     android:layout_marginTop="5dp"
-                    android:text="@{headlines.articles.get(position).publishedAt}"
+                    android:text="@{headlines.publishedAt}"
                     android:textSize="12sp"
                     />
 

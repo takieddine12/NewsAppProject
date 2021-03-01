@@ -9,6 +9,7 @@ import androidx.paging.PagingState
 import androidx.paging.rxjava2.RxPagingSource
 import com.example.testingproject.newsmodels.HeadlinesModel
 import com.example.testingproject.mvvm.MainViewModel
+import com.example.testingproject.newsmodels.Article
 import com.example.testingproject.webauth.ApiResponse
 import io.reactivex.Observer
 import io.reactivex.Single
@@ -24,16 +25,16 @@ class HeadlinesSourceFactory(
     var apiResponse: ApiResponse,
     var country : String ,
     var apiKey : String
-) : PagingSource<Int, HeadlinesModel>() {
-    override fun getRefreshKey(state: PagingState<Int, HeadlinesModel>): Int? {
+) : PagingSource<Int, Article>() {
+    override fun getRefreshKey(state: PagingState<Int, Article>): Int? {
         return -1
     }
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, HeadlinesModel> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Article> {
         return try {
             val nextPageNumber = params.key ?: 1
             LoadResult.Page(
-                data = listOf(apiResponse.getHeadlines(country,apiKey,nextPageNumber)),
+                data = apiResponse.getHeadlines(country,apiKey,nextPageNumber).articles!!,
                 prevKey = if(nextPageNumber == 1) null else nextPageNumber -1,
                 nextKey = nextPageNumber + 1
             )
@@ -46,31 +47,3 @@ class HeadlinesSourceFactory(
 
 }
 
-/*
-override fun getRefreshKey(state: PagingState<Int, HeadlinesModel>): Int? {
-        return -1
-    }
-
-    override fun loadSingle(params: LoadParams<Int>): Single<LoadResult<Int, HeadlinesModel>> {
-        var nextPage = params.key
-        if(nextPage == null){
-            nextPage = 1
-        }
-        val data = apiResponse.getHeadlines(country,apiKey,nextPage)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .map { loadData(it,nextPage) }
-
-
-        return data
-    }
-
-    private  fun loadData(headlinesModel: HeadlinesModel,page : Int) : LoadResult<Int,HeadlinesModel> {
-        return LoadResult.Page(
-            data = listOf(headlinesModel),
-            prevKey = if(page > 1) 1 else page,
-            nextKey = page+1
-        )
-    }
-
- */

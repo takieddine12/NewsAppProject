@@ -5,12 +5,14 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import androidx.paging.ExperimentalPagingApi
 import com.example.testingproject.R
 import com.github.appintro.AppIntro2
 import com.github.appintro.AppIntroFragment
 import com.github.appintro.model.SliderPage
-
+@ExperimentalPagingApi
 class SplashActivity : AppIntro2() {
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

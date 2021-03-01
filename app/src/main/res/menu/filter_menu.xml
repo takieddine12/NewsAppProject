@@ -3,12 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/headlinesSearchView"
-        android:title=""
-        android:iconTint="@android:color/holo_orange_dark"
-        app:showAsAction="ifRoom"
-        app:actionViewClass="androidx.appcompat.widget.SearchView"
-        tools:targetApi="o" />
+
+    <item android:title=""
+        android:id="@+id/refresh"
+        android:icon="@drawable/ic_baseline_refresh_24"
+        app:showAsAction="always"/>
+
+
 
     <item android:title=""
         android:id="@+id/headlinesVoice"

@@ -19,6 +19,8 @@ import androidx.cursoradapter.widget.SimpleCursorAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.ExperimentalPagingApi
 import androidx.recyclerview.widget.GridLayoutManager
@@ -30,8 +32,10 @@ import com.example.testingproject.mvvm.MainViewModel
 import com.example.testingproject.databinding.TopheadlinesLayoutBinding
 import com.example.testingproject.ui.FavNewsActivity
 import com.example.testingproject.models.SuggestionsModel
+import com.example.testingproject.mvvm.SharedViewModel
 import com.example.testingproject.ui.NewsDetailsActivity
 import com.example.testingproject.newslistener.HeadlinesOnListener
+import com.example.testingproject.newsmodels.Article
 import com.example.testingproject.newsmodels.HeadlinesModel
 import com.example.testingproject.ui.SettingsActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,7 +50,7 @@ import java.util.*
 @AndroidEntryPoint
 @ExperimentalPagingApi
 class HeadlinesFragment : Fragment() {
-
+     private lateinit var sharedViewModel: SharedViewModel
      private lateinit var headlinesAdapter: HeadLinesAdapter
      private val mainViewModel: MainViewModel by viewModels()
      lateinit var binding : TopheadlinesLayoutBinding
@@ -61,14 +65,15 @@ class HeadlinesFragment : Fragment() {
         binding.headlinesRecycler.layoutManager = GridLayoutManager(requireContext(),2)
         binding.headlinesRecycler.setHasFixedSize(true)
 
+        sharedViewModel = ViewModelProviders.of(this)[SharedViewModel::class.java]
         headlinesAdapter = HeadLinesAdapter(object : HeadlinesOnListener {
-                override fun headlinesOnClick(headlinesModel: HeadlinesModel,position : Int) {
+                override fun headlinesOnClick(headlinesModel: Article) {
                         Intent(requireContext(), NewsDetailsActivity::class.java).apply {
-                            putExtra("author", headlinesModel.articles?.get(position)?.author)
-                            putExtra("title", headlinesModel.articles?.get(position)?.title)
-                            putExtra("description", headlinesModel.articles?.get(position)?.description)
-                            putExtra("imgUrl", headlinesModel.articles?.get(position)?.urlToImage)
-                            putExtra("date", headlinesModel.articles?.get(position)?.publishedAt)
+                            putExtra("author", headlinesModel.author)
+                            putExtra("title", headlinesModel.title)
+                            putExtra("description", headlinesModel.description)
+                            putExtra("imgUrl", headlinesModel.urlToImage)
+                            putExtra("date", headlinesModel.publishedAt)
                             binding.fabMenu.collapse()
                             startActivity(this)
                     }
@@ -80,9 +85,9 @@ class HeadlinesFragment : Fragment() {
         } else {
             lifecycleScope.launchWhenStarted {
                 mainViewModel.getOfflineHeadlines().collect {
-                    binding.headlinesNoPost.visibility = View.INVISIBLE
-                  //  headlinesAdapter.submitData(it)
-                   binding.headlinesRecycler.adapter = headlinesAdapter
+                    binding.noDataHeadlines.visibility = View.INVISIBLE
+                    headlinesAdapter.submitData(it)
+                    binding.headlinesRecycler.adapter = headlinesAdapter
                 }
             }
 
@@ -107,15 +112,19 @@ class HeadlinesFragment : Fragment() {
                 startActivity(this)
             }
         }
+
+        sharedViewModel.getQuery().observe(viewLifecycleOwner, Observer {
+             fetchData(it)
+        })
     }
 
     private fun fetchData() {
            lifecycleScope.launchWhenStarted {
-//               mainViewModel.getHeadLines("us",Utils.API_KEY).collect { pagedList ->
-//                   binding.headlinesNoPost.visibility = View.INVISIBLE
-//                   headlinesAdapter.submitData(pagedList)
-//                   binding.headlinesRecycler.adapter = headlinesAdapter
-//                   }
+               mainViewModel.getHeadLines("us",Utils.API_KEY).collect {
+                   binding.noDataHeadlines.visibility = View.INVISIBLE
+                   headlinesAdapter.submitData(pagingData = it)
+                   binding.headlinesRecycler.adapter = headlinesAdapter
+                   }
            }
 
     }
@@ -127,7 +136,120 @@ class HeadlinesFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.filter_menu,menu)
-        val menuItem = menu.findItem(R.id.headlinesSearchView)?.actionView as SearchView
+
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.language -> {
+                showFilterDialog()
+            }
+            R.id.headlinesVoice -> {
+                voiceSearch()
+            }
+        }
+        return true
+    }
+
+    private fun showFilterDialog() {
+
+        FilterDialog(activity).apply {
+            searchBoxHint = "Search"
+            toolbarTitle  = "Countries"
+            setList(countriesList())
+
+            show("code","name",
+                DialogListener.Single { selectedItem ->
+                    lifecycleScope.launch {
+                        mainViewModel.getHeadLines(selectedItem!!.name, Utils.API_KEY).collect {
+                            binding.noDataHeadlines.visibility = View.INVISIBLE
+                            headlinesAdapter.submitData(it)
+                            binding.headlinesRecycler.adapter = headlinesAdapter
+                        }
+                    }
+                })
+        }
+    }
+    private fun countriesList() : List<String> {
+       arrayListOf<String>().apply {
+           add("ae")
+           add("ar")
+           add("at")
+           add("au")
+           add("be")
+           add("bg")
+           add("br")
+           add("ca")
+           add("ch")
+           add("cn")
+           add("co")
+           add("cu")
+           add("cz")
+           add("de")
+           add("en")
+           return this
+       }
+    }
+
+    private fun fetchData(query: String) {
+
+        lifecycleScope.launchWhenStarted {
+            mainViewModel.getHeadLines(query,Utils.API_KEY).collect { pagedList ->
+                headlinesAdapter.submitData(pagedList)
+                binding.headlinesRecycler.adapter = headlinesAdapter
+            }
+        }
+    }
+    private fun voiceSearch() {
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Pass a search")
+        startActivityForResult(intent, SEARCH_REQUEST_CODE)
+
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == SEARCH_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            val voiceList = data!!.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+            for (i in 0 until voiceList!!.size) {
+                fetchData(voiceList[0].toLowerCase(Locale.ROOT))
+            }
+        }
+    }
+    companion object{
+        const val SEARCH_REQUEST_CODE = 1001
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+ val menuItem = menu.findItem(R.id.headlinesSearchView)?.actionView as SearchView
         menuItem.findViewById<ImageView>(androidx.appcompat.R.id.search_button).apply {
             setImageDrawable(ContextCompat.getDrawable(requireContext(),
             R.drawable.ic_search_black_24dp))
@@ -181,88 +303,4 @@ class HeadlinesFragment : Fragment() {
                 return false
             }
         })
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
-            R.id.language -> {
-                showFilterDialog()
-            }
-            R.id.headlinesVoice -> {
-                voiceSearch()
-            }
-        }
-        return true
-    }
-
-    private fun showFilterDialog() {
-
-        FilterDialog(activity).apply {
-            searchBoxHint = "Search"
-            toolbarTitle  = "Countries"
-            setList(countriesList())
-
-            show("code","name",
-                DialogListener.Single { selectedItem ->
-                    lifecycleScope.launch {
-//                        mainViewModel.getHeadLines(selectedItem!!.name, Utils.API_KEY).collect {
-//                            binding.headlinesNoPost.visibility = View.INVISIBLE
-//                            headlinesAdapter.submitData(it)
-//                            binding.headlinesRecycler.adapter = headlinesAdapter
-//                        }
-                    }
-                })
-        }
-    }
-    private fun countriesList() : List<String> {
-       arrayListOf<String>().apply {
-           add("ae")
-           add("ar")
-           add("at")
-           add("au")
-           add("be")
-           add("bg")
-           add("br")
-           add("ca")
-           add("ch")
-           add("cn")
-           add("co")
-           add("cu")
-           add("cz")
-           add("de")
-           add("en")
-           return this
-       }
-    }
-
-    private fun fetchData(query: String) {
-
-        lifecycleScope.launchWhenStarted {
-//            mainViewModel.getHeadLines(query,Utils.API_KEY).collect { pagedList ->
-//                binding.headlinesNoPost.visibility = View.INVISIBLE
-//                headlinesAdapter.submitData(pagedList)
-//                binding.headlinesRecycler.adapter = headlinesAdapter
-//            }
-        }
-    }
-    private fun voiceSearch() {
-        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Pass a search")
-        startActivityForResult(intent, SEARCH_REQUEST_CODE)
-
-    }
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == SEARCH_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            val voiceList = data!!.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
-            for (i in 0 until voiceList!!.size) {
-                fetchData(voiceList[0].toLowerCase(Locale.ROOT))
-            }
-        }
-    }
-    companion object{
-        const val SEARCH_REQUEST_CODE = 1001
-    }
-}
+ */

@@ -7,10 +7,8 @@
             type="com.example.testingproject.newslistener.NewsOnListener" />
         <variable
             name="newsy"
-            type="com.example.testingproject.newsmodels.NewsModel" />
-        <variable
-            name="position"
-            type="int" />
+            type="com.example.testingproject.newsmodels.ArticleX" />
+
     </data>
 
     <androidx.cardview.widget.CardView
@@ -34,14 +32,14 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:onClick="@{() -> listener.onNewsClicked(newsy,position)}"
+                android:onClick="@{() -> listener.onNewsClicked(newsy)}"
                 android:orientation="vertical">
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/imageView2"
                     android:layout_width="match_parent"
                     android:layout_height="130dp"
                     android:background="@drawable/placeholder"
-                    app:general="@{newsy.articles.get(position).urlToImage}"
+                    app:general="@{newsy.urlToImage}"
                     tools:ignore="ContentDescription" />
 
                 <TextView
@@ -54,7 +52,7 @@
                     android:ellipsize="end"
                     android:gravity="center"
                     android:maxLines="1"
-                    android:text="@{newsy.articles.get(position).title}"
+                    android:text="@{newsy.title}"
                     android:textSize="12sp"
                     />
 
@@ -68,7 +66,7 @@
                     android:ellipsize="end"
                     android:gravity="center"
                     android:maxLines="3"
-                    android:text="@{newsy.articles.get(position).description}"
+                    android:text="@{newsy.description}"
                     android:textSize="12sp"
                     />
 
@@ -82,7 +80,7 @@
                     android:ellipsize="end"
                     android:gravity="center"
                     android:maxLines="1"
-                    android:text="@{newsy.articles.get(position).author}"
+                    android:text="@{newsy.author}"
                     android:textSize="12sp" />
 
                 <TextView
@@ -95,7 +93,7 @@
                     android:ellipsize="end"
                     android:gravity="center"
                     android:maxLines="1"
-                    android:text="@{newsy.articles.get(position).publishedAt}"
+                    android:text="@{newsy.publishedAt}"
                     android:textSize="12sp" />
             </LinearLayout>
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
