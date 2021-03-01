@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull
 data class NewsItemRemoteKeys (
     @PrimaryKey
     @NotNull
-    val newsId : Long?,
-    val prevKey : Int,
-    val nextKey : Int
+    var newsId : Long?,
+    var prevKey : Int,
+    var nextKey : Int
     )

@@ -14,7 +14,7 @@ interface HeadlinesRemoteKeyDao {
     suspend fun insertRemoteKey(remoteKey : List<NewsItemRemoteKeys>)
 
     @Query("SELECT * FROM RemoteKeysTable Where newsId = :remoteNewsId")
-     fun getItemPerId(remoteNewsId : Long)
+     fun getItemPerId(remoteNewsId : Long) : NewsItemRemoteKeys
 
     @Query("DELETE FROM RemoteKeysTable")
      fun clearHeadlinesRemoteKey()

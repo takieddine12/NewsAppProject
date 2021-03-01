@@ -6,10 +6,9 @@ import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.example.testingproject.R
-import com.github.paolorotolo.appintro.AppIntro2
-import com.github.paolorotolo.appintro.AppIntro2Fragment
-import com.github.paolorotolo.appintro.model.SliderPage
-
+import com.github.appintro.AppIntro2
+import com.github.appintro.AppIntroFragment
+import com.github.appintro.model.SliderPage
 
 class SplashActivity : AppIntro2() {
 
@@ -40,16 +39,15 @@ class SplashActivity : AppIntro2() {
                 sliderPage.title = titles_array[i]
                 sliderPage.description  = headlines_array[i]
                 sliderPage.titleColor  = Color.GRAY
-                sliderPage.descColor = Color.GRAY
+                sliderPage.descriptionColor = Color.GRAY
                 sliderPage.imageDrawable = news_images[i]
-                sliderPage.bgColor = Color.WHITE
+                sliderPage.backgroundColor = Color.WHITE
                 sliderPage.titleTypeface = "zerofont.ttf"
-                addSlide(AppIntro2Fragment.newInstance(sliderPage))
+                addSlide(AppIntroFragment.newInstance(sliderPage))
 
-                selectedIndicatorColor  = Color.BLACK
-                unselectedIndicatorColor = Color.GRAY
+                setIndicatorColor(Color.BLACK, Color.GRAY)
 
-                showSkipButton(true)
+                isSkipButtonEnabled = true
 
                 val prefs = getSharedPreferences("prefs", Context.MODE_PRIVATE)
                 val editor = prefs.edit()

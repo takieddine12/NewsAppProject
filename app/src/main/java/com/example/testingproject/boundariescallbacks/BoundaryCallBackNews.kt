@@ -1,32 +1,25 @@
 package com.example.testingproject.boundariescallbacks
 
-import android.util.Log
 import androidx.paging.*
-import com.example.testingproject.room.NewsDao
 import com.example.testingproject.Utils
 import com.example.testingproject.models.NewsItemRemoteKeys
-import com.example.testingproject.newsmodels.NewsModel
 import com.example.testingproject.mvvm.MainViewModel
 import com.example.testingproject.newsmodels.ArticleX
 import com.example.testingproject.webauth.ApiResponse
-import io.reactivex.Observer
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 @ExperimentalPagingApi
 class BoundaryCallBackNews(
     var apiResponse: ApiResponse,
-    var query : String,
+    var query: String,
     var mainViewModel: MainViewModel) :
-    RemoteMediator<Int,NewsModel>() {
+    RemoteMediator<Int, ArticleX>() {
 
-    private val initialPage : Int = 1
-    override suspend fun load(loadType: LoadType, state: PagingState<Int, NewsModel>): MediatorResult {
-        val pageState = when(loadType){
+    private val initialPage: Int = 1
+    override suspend fun load(
+        loadType: LoadType,
+        state: PagingState<Int, ArticleX>
+    ): MediatorResult {
+        val pageState = when (loadType) {
             LoadType.REFRESH -> {
                 val remoteKeys = getRemoteKeyClosestToCurrentPosition(state = state)
                 remoteKeys?.nextKey?.minus(1) ?: initialPage
@@ -42,9 +35,9 @@ class BoundaryCallBackNews(
 
 
         // TODO : Inserting Response Into DataBase
-        val response  = apiResponse.getNews(query,apiKey = Utils.API_KEY,page = pageState).articles
-        val endOfPaginationReached = response.size < state.config.pageSize
-        if(loadType == LoadType.REFRESH){
+        val response = apiResponse.getNews(query, apiKey = Utils.API_KEY, page = pageState).articles
+        val endOfPaginationReached = response!!.size < state.config.pageSize
+        if (loadType == LoadType.REFRESH) {
             mainViewModel.clearNewsRemoteKey()
             mainViewModel.deleteAllNews()
         }
@@ -66,18 +59,25 @@ class BoundaryCallBackNews(
 
         return MediatorResult.Success(endOfPaginationReached)
     }
-    private fun getRemoteKeyForLastItem(state : PagingState<Int,NewsModel>) : NewsItemRemoteKeys? {
-        return state.lastItemOrNull()?.let {
-            it.articles.map {
-                mainViewModel.getNewsItemPerId(it.newsid!!)
+
+    private fun getRemoteKeyForLastItem(state: PagingState<Int, ArticleX>): NewsItemRemoteKeys? {
+        return state.lastItemOrNull()?.newsid?.let { mainViewModel.getNewsItemPerId(it) }
+    }
+    private fun getRemoteKeyClosestToCurrentPosition(state: PagingState<Int, ArticleX>): NewsItemRemoteKeys? {
+        return state.anchorPosition.let {
+            state.closestItemToPosition(it!!)!!.newsid.let {
+                mainViewModel.getNewsItemPerId(it!!)
             }
         }
     }
-    private fun getRemoteKeyClosestToCurrentPosition(state : PagingState<Int,NewsModel>) : NewsItemRemoteKeys? {
-       return state.anchorPosition?.let {
-           state.closestItemToPosition(it).articles.map {
-               it.newsid?.let { mainViewModel.getNewsItemPerId(it!!) }
-           }
+}
+
+
+
+/*
+return state.anchorPosition?.let {
+        state.closestItemToPosition(anchorPosition = it)?.newsid?.let {
+            mainViewModel.getHeadlinesItemPerId(it)
         }
     }
-}
+ */

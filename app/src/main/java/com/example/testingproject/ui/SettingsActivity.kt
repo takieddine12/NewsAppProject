@@ -22,7 +22,6 @@ class SettingsActivity : AppCompatActivity() {
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(binding.settingsToolbar)
         supportActionBar?.setHomeButtonEnabled(true)
         supportFragmentManager.beginTransaction().replace(R.id.framelayout, PreferenceSettings())
             .commit()

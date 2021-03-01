@@ -24,66 +24,66 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4ClassRunner::class)
 class MainActivityTest{
 
-
-    @Test
-    fun isMainActivityInView(){
-        val activityScenario  = ActivityScenario.launch(MainActivity::class.java)
-        onView(withId(R.id.layout)).check(matches(isDisplayed()))
-    }
-    @Test
-    fun isAllViewsInView(){
-        val activityScenario = ActivityScenario.launch(MainActivity::class.java)
-        onView(withId(R.id.linearLayoutMainActivity)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-        onView(withId(R.id.toolbar)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-        onView(withId(R.id.main_tablayout)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-        onView(withId(R.id.refreshlayout)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-        onView(withId(R.id.main_view_pager)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
-
-    }
-
-
-    fun SelectPositionTabLayout(tabIndex : Int) : ViewAction{
-        return object : ViewAction {
-            override fun getDescription(): String  = "with tab at index$tabIndex"
-
-            override fun getConstraints(): Matcher<View>  = allOf(isDisplayed(), isAssignableFrom(TabLayout::class.java))
-            override fun perform(uiController: UiController?, view: View?) {
-                var tableLayout  = view as TabLayout
-                var tabIndexx : TabLayout.Tab = tableLayout.getTabAt(tabIndex)!!
-                    ?: throw PerformException.Builder()
-                        .withCause(Throwable("No Tab Selected at the at position"))
-                        .build()
-
-                tabIndexx.select()
-            }
-
-        }
-
-    }
-
-    @Test
-    fun TestTabLayout(){
-        var scenarioActivity = ActivityScenario.launch(MainActivity::class.java)
-        onView(withId(R.id.main_tablayout)).perform(SelectPositionTabLayout(0))
-        onView(withId(R.id.main_tablayout)).perform(SelectPositionTabLayout(1))
-    }
-
-    @Test
-    fun TestNavigationDrawer(){
-        var activityScenario = ActivityScenario.launch(MainActivity::class.java)
-        onView(withId(R.id.layout))
-            .check(matches(isClosed(Gravity.LEFT)))
-            .perform(DrawerActions.open())
-
-        onView(withId(R.id.nav)).perform(NavigationViewActions.navigateTo(R.id.settings))
-        onView(withId(R.id.nav)).perform(NavigationViewActions.navigateTo(R.id.deletesuggestion))
-
-    }
-
-    @Test
-    fun TestViewPager(){
-        val activityScenario  = ActivityScenario.launch(MainActivity::class.java)
-        onView(withId(R.id.main_view_pager)).perform(swipeLeft())
-    }
+//
+//    @Test
+//    fun isMainActivityInView(){
+//        val activityScenario  = ActivityScenario.launch(MainActivity::class.java)
+//        onView(withId(R.id.layout)).check(matches(isDisplayed()))
+//    }
+//    @Test
+//    fun isAllViewsInView(){
+//        val activityScenario = ActivityScenario.launch(MainActivity::class.java)
+//        onView(withId(R.id.linearLayoutMainActivity)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+//        onView(withId(R.id.toolbar)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+//        onView(withId(R.id.main_tablayout)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+//        onView(withId(R.id.refreshlayout)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+//        onView(withId(R.id.main_view_pager)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+//
+//    }
+//
+//
+//    fun SelectPositionTabLayout(tabIndex : Int) : ViewAction{
+//        return object : ViewAction {
+//            override fun getDescription(): String  = "with tab at index$tabIndex"
+//
+//            override fun getConstraints(): Matcher<View>  = allOf(isDisplayed(), isAssignableFrom(TabLayout::class.java))
+//            override fun perform(uiController: UiController?, view: View?) {
+//                var tableLayout  = view as TabLayout
+//                var tabIndexx : TabLayout.Tab = tableLayout.getTabAt(tabIndex)!!
+//                    ?: throw PerformException.Builder()
+//                        .withCause(Throwable("No Tab Selected at the at position"))
+//                        .build()
+//
+//                tabIndexx.select()
+//            }
+//
+//        }
+//
+//    }
+//
+//    @Test
+//    fun TestTabLayout(){
+//        var scenarioActivity = ActivityScenario.launch(MainActivity::class.java)
+//        onView(withId(R.id.main_tablayout)).perform(SelectPositionTabLayout(0))
+//        onView(withId(R.id.main_tablayout)).perform(SelectPositionTabLayout(1))
+//    }
+//
+//    @Test
+//    fun TestNavigationDrawer(){
+//        var activityScenario = ActivityScenario.launch(MainActivity::class.java)
+//        onView(withId(R.id.layout))
+//            .check(matches(isClosed(Gravity.LEFT)))
+//            .perform(DrawerActions.open())
+//
+//        onView(withId(R.id.nav)).perform(NavigationViewActions.navigateTo(R.id.settings))
+//        onView(withId(R.id.nav)).perform(NavigationViewActions.navigateTo(R.id.deletesuggestion))
+//
+//    }
+//
+//    @Test
+//    fun TestViewPager(){
+//        val activityScenario  = ActivityScenario.launch(MainActivity::class.java)
+//        onView(withId(R.id.main_view_pager)).perform(swipeLeft())
+//    }
 
 }

@@ -24,4 +24,13 @@
     <style name="CustomFabStyle">
         <item name="android:textColor">@android:color/black</item>
     </style>
+
+
+    // Tablayout Style
+    <style name="ChipTabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabIndicatorColor">@android:color/transparent</item>
+        <item name="tabBackground">@drawable/selector_tab</item>
+        <item name="tabSelectedTextColor">?android:textColorPrimary</item>
+    </style>
+
 </resources>

@@ -7,6 +7,7 @@ import es.dmoral.toasty.Toasty
 
 object Utils {
 
+
     const val API_KEY = "a9105f91876947b1b3b70761813fd4f9"
     const val NETWORK_PAGE_SIZE = 15
     const val CACHE_PAGE_SIZE = 15
@@ -16,6 +17,8 @@ object Utils {
         val netWorkInfo = connectivityManager.activeNetworkInfo
         return netWorkInfo != null
     }
+
+
 }
 
 fun Context.showToast(msg : String) = Toasty.success(this,msg,Toasty.LENGTH_SHORT).show()

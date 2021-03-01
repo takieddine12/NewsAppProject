@@ -16,19 +16,19 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4ClassRunner::class)
 class favNewsTest{
 
-    @get: Rule
-    var activityScenarioRule = ActivityScenarioRule(FavNewsActivity::class.java)
-
-    @Test
-    fun isActivityInView(){
-        onView(withId(R.id.favlayout)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
-    }
-
-    @Test
-    fun TestViewsAreDisplayed(){
-
-        onView(withId(R.id.favtoolbar)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
-        onView(withId(R.id.fav_recycler)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
-    }
+//    @get: Rule
+//    var activityScenarioRule = ActivityScenarioRule(FavNewsActivity::class.java)
+//
+//    @Test
+//    fun isActivityInView(){
+//        onView(withId(R.id.favlayout)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+//    }
+//
+//    @Test
+//    fun TestViewsAreDisplayed(){
+//
+//        onView(withId(R.id.favtoolbar)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+//        onView(withId(R.id.fav_recycler)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+//    }
 
 }

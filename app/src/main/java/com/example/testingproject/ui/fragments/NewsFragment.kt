@@ -61,11 +61,11 @@ class NewsFragment : Fragment() {
         newsAdapter = NewsAdapter(object : NewsOnListener {
             override fun onNewsClicked(allNewsModel: NewsModel, position: Int) {
                 Intent(requireContext(), NewsDetailsActivity::class.java).apply {
-                    putExtra("author", allNewsModel.articles[position].author)
-                    putExtra("title", allNewsModel.articles[position].title)
-                    putExtra("description", allNewsModel.articles[position].description)
-                    putExtra("imgUrl", allNewsModel.articles[position].urlToImage)
-                    putExtra("date", allNewsModel.articles[position].publishedAt)
+                    putExtra("author", allNewsModel.articles?.get(position)?.author)
+                    putExtra("title", allNewsModel.articles?.get(position)?.title)
+                    putExtra("description", allNewsModel.articles?.get(position)?.description)
+                    putExtra("imgUrl", allNewsModel.articles?.get(position)?.urlToImage)
+                    putExtra("date", allNewsModel.articles?.get(position)?.publishedAt)
                     binding.fabMenu.collapse()
                     startActivity(this)
                 }
@@ -73,12 +73,12 @@ class NewsFragment : Fragment() {
         })
 
         if(Utils.checkConnectivity(requireContext())) {
-            fetchData("italy")
+           fetchData("italy")
         } else {
             lifecycleScope.launchWhenStarted {
                 mainViewModel.getOfflineNews().collect {
                     binding.newsNoPost.visibility = View.INVISIBLE
-                     newsAdapter.submitData(it)
+                    // newsAdapter.submitData()
                      binding.newsRecycler.adapter = newsAdapter
                 }
             }
@@ -192,12 +192,12 @@ class NewsFragment : Fragment() {
 
     private fun fetchData(query: String) {
         lifecycleScope.launchWhenStarted {
-            mainViewModel.getNews(query,Utils.API_KEY).collect { pagedList ->
-                Timber.d("PagedList Size $pagedList.size")
-                binding.newsNoPost.visibility = View.INVISIBLE
-                newsAdapter.submitData(pagedList)
-                binding.newsRecycler.adapter = newsAdapter
-            }
+//            mainViewModel.getNews(query,Utils.API_KEY).collect { pagedList ->
+//                Timber.d("PagedList Size $pagedList.size")
+//                binding.newsNoPost.visibility = View.INVISIBLE
+//                newsAdapter.submitData(pagedList)
+//                binding.newsRecycler.adapter = newsAdapter
+//            }
         }
 
     }

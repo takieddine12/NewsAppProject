@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.paging.ExperimentalPagingApi
 import androidx.recyclerview.widget.RecyclerView
 import com.example.testingproject.ui.NewsDetailsActivity
 import com.example.testingproject.R
@@ -18,6 +19,7 @@ import com.example.testingproject.newslistener.FavOnListener
 class FavNewsAdapter(var context: Context,var list : List<FavNewsModel>) :
     RecyclerView.Adapter<FavNewsAdapter.ViewHolder>() {
 
+    @ExperimentalPagingApi
     private var mainViewModel : MainViewModel? = null
     class ViewHolder(var favRowLayoutBinding: FavRowLayoutBinding) : RecyclerView.ViewHolder(favRowLayoutBinding.root)
 
@@ -32,6 +34,7 @@ class FavNewsAdapter(var context: Context,var list : List<FavNewsModel>) :
     }
 
 
+    @ExperimentalPagingApi
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val model = list[position]
         holder.favRowLayoutBinding.news = model

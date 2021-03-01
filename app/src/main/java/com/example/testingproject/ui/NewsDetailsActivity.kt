@@ -3,6 +3,7 @@ package com.example.testingproject.ui
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.paging.ExperimentalPagingApi
 import com.example.testingproject.showToast
 import com.example.testingproject.Utils
 import com.example.testingproject.mvvm.MainViewModel
@@ -13,11 +14,13 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_news__details_.*
 
 @AndroidEntryPoint
+@ExperimentalPagingApi
 class NewsDetailsActivity : AppCompatActivity() {
 
     private val mainViewModel: MainViewModel? by viewModels()
     lateinit var binding: ActivityNewsDetailsBinding
 
+    @ExperimentalPagingApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityNewsDetailsBinding.inflate(layoutInflater)

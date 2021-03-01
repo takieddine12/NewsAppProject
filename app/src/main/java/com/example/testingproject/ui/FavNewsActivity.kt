@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import androidx.paging.ExperimentalPagingApi
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,7 +22,9 @@ import kotlinx.android.synthetic.main.activity_fav_news.*
 import java.util.*
 
 @AndroidEntryPoint
+@ExperimentalPagingApi
 class FavNewsActivity : AppCompatActivity() {
+
 
     private val mainViewModel: MainViewModel? by viewModels()
     private var list: List<FavNewsModel>? = null
@@ -60,7 +63,7 @@ class FavNewsActivity : AppCompatActivity() {
                         .setTitle(getString(R.string.deletenews))
                         .setMessage(getString(R.string.areyousureyouwanttodeleteall))
                         .setPositiveButton(getString(R.string.yes)){ dialog, which ->
-                            mainViewModel!!.deleteAllNews()
+                          //  mainViewModel!!.deleteAllNews()
                             this@FavNewsActivity.showToast(getString(R.string.allarticlesdeleted))
                         }
                         .setNegativeButton(getString(R.string.no)){ dialog, which ->
@@ -82,7 +85,7 @@ class FavNewsActivity : AppCompatActivity() {
                 return false
             }
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                mainViewModel!!.deletePerFavNews(list!![viewHolder.adapterPosition])
+               // mainViewModel!!.deletePerFavNews(list!![viewHolder.adapterPosition])
                 this@FavNewsActivity.showToast(getString(R.string.articlessuccessfullydeleted))
             }
         }

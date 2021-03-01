@@ -64,11 +64,11 @@ class HeadlinesFragment : Fragment() {
         headlinesAdapter = HeadLinesAdapter(object : HeadlinesOnListener {
                 override fun headlinesOnClick(headlinesModel: HeadlinesModel,position : Int) {
                         Intent(requireContext(), NewsDetailsActivity::class.java).apply {
-                            putExtra("author",headlinesModel.articles[position].author)
-                            putExtra("title",headlinesModel.articles[position].title)
-                            putExtra("description",headlinesModel.articles[position].description)
-                            putExtra("imgUrl",headlinesModel.articles[position].urlToImage)
-                            putExtra("date",headlinesModel.articles[position].publishedAt)
+                            putExtra("author", headlinesModel.articles?.get(position)?.author)
+                            putExtra("title", headlinesModel.articles?.get(position)?.title)
+                            putExtra("description", headlinesModel.articles?.get(position)?.description)
+                            putExtra("imgUrl", headlinesModel.articles?.get(position)?.urlToImage)
+                            putExtra("date", headlinesModel.articles?.get(position)?.publishedAt)
                             binding.fabMenu.collapse()
                             startActivity(this)
                     }
@@ -81,7 +81,7 @@ class HeadlinesFragment : Fragment() {
             lifecycleScope.launchWhenStarted {
                 mainViewModel.getOfflineHeadlines().collect {
                     binding.headlinesNoPost.visibility = View.INVISIBLE
-                    headlinesAdapter.submitData(it)
+                  //  headlinesAdapter.submitData(it)
                    binding.headlinesRecycler.adapter = headlinesAdapter
                 }
             }
@@ -111,11 +111,11 @@ class HeadlinesFragment : Fragment() {
 
     private fun fetchData() {
            lifecycleScope.launchWhenStarted {
-               mainViewModel.getHeadLines("us",Utils.API_KEY).collect { pagedList ->
-                   binding.headlinesNoPost.visibility = View.INVISIBLE
-                   headlinesAdapter.submitData(pagedList)
-                   binding.headlinesRecycler.adapter = headlinesAdapter
-                   }
+//               mainViewModel.getHeadLines("us",Utils.API_KEY).collect { pagedList ->
+//                   binding.headlinesNoPost.visibility = View.INVISIBLE
+//                   headlinesAdapter.submitData(pagedList)
+//                   binding.headlinesRecycler.adapter = headlinesAdapter
+//                   }
            }
 
     }
@@ -173,7 +173,7 @@ class HeadlinesFragment : Fragment() {
                 val cursor = menuItem.suggestionsAdapter.getItem(position) as Cursor
                 val selection = cursor.getString(cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1))
                 menuItem.setQuery(selection, false)
-                ///fetchData(selection)
+                fetchData(selection)
                 return false
             }
 
@@ -205,11 +205,11 @@ class HeadlinesFragment : Fragment() {
             show("code","name",
                 DialogListener.Single { selectedItem ->
                     lifecycleScope.launch {
-                        mainViewModel.getHeadLines(selectedItem!!.name, Utils.API_KEY).collect {
-                            binding.headlinesNoPost.visibility = View.INVISIBLE
-                            headlinesAdapter.submitData(it)
-                            binding.headlinesRecycler.adapter = headlinesAdapter
-                        }
+//                        mainViewModel.getHeadLines(selectedItem!!.name, Utils.API_KEY).collect {
+//                            binding.headlinesNoPost.visibility = View.INVISIBLE
+//                            headlinesAdapter.submitData(it)
+//                            binding.headlinesRecycler.adapter = headlinesAdapter
+//                        }
                     }
                 })
         }
@@ -238,11 +238,11 @@ class HeadlinesFragment : Fragment() {
     private fun fetchData(query: String) {
 
         lifecycleScope.launchWhenStarted {
-            mainViewModel.getHeadLines(query,Utils.API_KEY).collect { pagedList ->
-                binding.headlinesNoPost.visibility = View.INVISIBLE
-                headlinesAdapter.submitData(pagedList)
-                binding.headlinesRecycler.adapter = headlinesAdapter
-            }
+//            mainViewModel.getHeadLines(query,Utils.API_KEY).collect { pagedList ->
+//                binding.headlinesNoPost.visibility = View.INVISIBLE
+//                headlinesAdapter.submitData(pagedList)
+//                binding.headlinesRecycler.adapter = headlinesAdapter
+//            }
         }
     }
     private fun voiceSearch() {

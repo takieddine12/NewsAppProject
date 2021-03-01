@@ -31,13 +31,13 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="10dp"
-            app:fab_addButtonPlusIconColor="@android:color/white"
+            app:fab_addButtonPlusIconColor="@color/white"
             app:fab_addButtonColorNormal="@color/colorPrimary"
             style="@style/CustomFabStyle">
             <com.getbase.floatingactionbutton.FloatingActionButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:fab_colorNormal="@android:color/holo_orange_dark"
+                app:fab_colorNormal="@color/blackColor"
                 app:fab_icon="@drawable/ic_baseline_settings_24"
                 app:fab_title="Settings Label"
                 android:id="@+id/settingsMenu"
@@ -49,7 +49,7 @@
                 app:fab_title="Delete Label"
                 android:id="@+id/deleteMenu"
                 app:fab_icon="@drawable/ic_baseline_delete_24"
-                app:fab_colorNormal="@android:color/holo_orange_dark"
+                app:fab_colorNormal="@color/blackColor"
                 app:fabSize="normal"
                 />
 
@@ -59,7 +59,7 @@
                 app:fab_title="Delete Label"
                 android:id="@+id/favNews"
                 app:fab_icon="@drawable/ic_favorite"
-                app:fab_colorNormal="@android:color/holo_orange_dark"
+                app:fab_colorNormal="@color/blackColor"
                 app:fabSize="normal"
                 />
         </com.getbase.floatingactionbutton.FloatingActionsMenu>

@@ -14,14 +14,14 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4ClassRunner::class)
 class TopHeadlinesFragmentTest{
-
-    @Test
-    fun isTopHeadlinesFragmentVisible(){
-         var scenario = launchFragmentInContainer<HeadlinesFragment>()
-         onView(withId(R.id.headlineslayout)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
-         onView(withId(R.id.headlineaProgressBar)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
-         onView(withId(R.id.headlinesRecycler)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
-    }
+//
+//    @Test
+//    fun isTopHeadlinesFragmentVisible(){
+//         var scenario = launchFragmentInContainer<HeadlinesFragment>()
+//         onView(withId(R.id.headlineslayout)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+//         onView(withId(R.id.headlineaProgressBar)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+//         onView(withId(R.id.headlinesRecycler)).check(matches(withEffectiveVisibility(ViewMatchers.Visibility.VISIBLE)))
+//    }
 
 
 }

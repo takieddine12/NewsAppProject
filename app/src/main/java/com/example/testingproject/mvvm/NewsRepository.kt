@@ -55,14 +55,15 @@ class  NewsRepository @Inject constructor(
     suspend fun insertHeadlinesRemoteKey(list : List<NewsItemRemoteKeys>){
         headlinesRemoteKeyDao.insertRemoteKey(list)
     }
-     fun getHeadlinesItemPerId(key : Long){
-        headlinesRemoteKeyDao.getItemPerId(key)
+     fun getHeadlinesItemPerId(key : Long) : NewsItemRemoteKeys{
+       return headlinesRemoteKeyDao.getItemPerId(key)
     }
+
      fun clearHeadlinesKeys(){
         headlinesRemoteKeyDao.clearHeadlinesRemoteKey()
     }
-     fun getNewsPerId(key : Long){
-       newsRemoteKeyDao.getItemPerId(key)
+     fun getNewsPerId(key : Long) : NewsItemRemoteKeys{
+      return newsRemoteKeyDao.getItemPerId(key)
     }
      fun clearNewsKeys(){
         newsRemoteKeyDao.clearRemoteKey()

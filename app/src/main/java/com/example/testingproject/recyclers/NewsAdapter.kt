@@ -30,13 +30,13 @@ class NewsAdapter (var newsOnListener: NewsOnListener) : PagingDataAdapter<NewsM
      companion object {
          var diffUtil =   object : DiffUtil.ItemCallback<NewsModel>() {
              override fun areItemsTheSame(oldItem: NewsModel, newItem: NewsModel): Boolean {
-                 return oldItem.articles[0].author == newItem.articles[0].author
+                 return oldItem.articles?.get(0)?.author == newItem.articles?.get(0)?.author
              }
 
              override fun areContentsTheSame(oldItem: NewsModel, newItem: NewsModel): Boolean {
-                 return oldItem.articles[0].title == newItem.articles[0].title
-                         && oldItem.articles[0].description == newItem.articles[0].description
-                         && oldItem.articles[0].publishedAt == newItem.articles[0].publishedAt
+                 return oldItem.articles?.get(0)?.title  == newItem.articles?.get(0)?.title
+                         && oldItem.articles?.get(0)?.description == newItem.articles?.get(0)?.description
+                         && oldItem.articles?.get(0)?.publishedAt == newItem.articles?.get(0)?.publishedAt
              }
          }
     }

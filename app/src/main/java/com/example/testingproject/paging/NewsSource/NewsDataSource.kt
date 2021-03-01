@@ -22,7 +22,7 @@ class NewsDataSource(
     var query: String,
     var apikey: String
 ) : PagingSource<Int, NewsModel>()  {
-    override fun getRefreshKey(state: PagingState<Int, NewsModel>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, NewsModel>): Int {
         return -1
     }
 

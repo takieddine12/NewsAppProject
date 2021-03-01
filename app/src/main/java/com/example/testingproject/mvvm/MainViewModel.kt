@@ -1,26 +1,17 @@
 package com.example.testingproject.mvvm
 
-import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.paging.*
-import com.example.testingproject.Utils
-import com.example.testingproject.boundariescallbacks.BoundaryCallBackHeadlines
-import com.example.testingproject.boundariescallbacks.BoundaryCallBackNews
 import com.example.testingproject.models.FavNewsModel
 import com.example.testingproject.models.NewsItemRemoteKeys
 import com.example.testingproject.models.SuggestionsModel
 import com.example.testingproject.newsmodels.Article
 import com.example.testingproject.newsmodels.ArticleX
-import com.example.testingproject.newsmodels.HeadlinesModel
-import com.example.testingproject.newsmodels.NewsModel
-import com.example.testingproject.paging.HeadlinesSource.HeadlinesSourceFactory
-import com.example.testingproject.paging.NewsSource.NewsDataSource
 import com.example.testingproject.webauth.ApiResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.reactivex.Flowable
-import io.reactivex.Single
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,40 +23,41 @@ class MainViewModel @Inject constructor(
     private var newsRepository: NewsRepository)
     : ViewModel() {
 
-
     ///-----Online
-    fun getNews(query: String, apiKey: String): Flow<PagingData<NewsModel>> {
-      return Pager(
-          config = getConfig(),
-          remoteMediator = BoundaryCallBackNews(apiResponse,query,this)){
-          NewsDataSource(apiResponse,query,apiKey)
-      }.flow
-          .cachedIn(viewModelScope)
-    }
-    fun getHeadLines(country: String, apiKey: String): Flow<PagingData<HeadlinesModel>> {
-         return Pager(
-             config = getConfig(),
-             remoteMediator = BoundaryCallBackHeadlines(country,this,apiResponse)){
-             HeadlinesSourceFactory(apiResponse,country,apiKey)
-         }.flow.cachedIn(viewModelScope)
-    }
+
+//    fun getNews(query: String, apiKey: String) : Flow<PagingData<NewsModel>> {
+//        return Pager(
+//            config = PagingConfig(pageSize = 50),
+//             remoteMediator = BoundaryCallBackNews(apiResponse,query,this)){
+//           NewsDataSource(apiResponse,query,apiKey)
+//        }
+//            .flow
+//            .cachedIn(viewModelScope)
+//
+//
+//    }
+//    fun getHeadLines(country: String, apiKey: String): Flow<PagingData<HeadlinesModel>> {
+//         return Pager(
+//             config = getConfig(),
+//             remoteMediator = BoundaryCallBackHeadlines(country,this,apiResponse)
+//         ){
+//             HeadlinesSourceFactory(apiResponse,country,apiKey)
+//         }.flow.cachedIn(viewModelScope)
+//    }
 
     //-----Offline
-    fun getOfflineNews() : Flow<PagingData<NewsModel>> {
+    fun getOfflineNews() : Flow<PagingData<ArticleX>> {
         return Pager(
             config = getConfig()){
              newsRepository.getAllNews()
         }.flow.cachedIn(viewModelScope)
     }
 
-    fun getOfflineHeadlines() : Flow<PagingData<HeadlinesModel>> {
+    fun getOfflineHeadlines() : Flow<PagingData<Article>> {
         return Pager(config = getConfig()){
             newsRepository.getAllHeadlines()
         }.flow.cachedIn(viewModelScope)
     }
-
-
-
 
     // TODO : Dao Headlines Section
 

@@ -8,10 +8,12 @@ import android.os.Build
 import android.os.Bundle
 import android.os.LocaleList
 import android.util.DisplayMetrics
+import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import com.example.testingproject.R
 import com.example.testingproject.Utils
 import com.example.testingproject.databinding.ActivityMainBinding
+import com.example.testingproject.extras.Common
 import com.example.testingproject.showWarningToast
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
@@ -45,6 +47,14 @@ class MainActivity : AppCompatActivity() {
                     }
             }
         }.attach()
+
+        for (i in 0 until binding.tabLayout.tabCount) {
+            val tab = (binding.tabLayout.getChildAt(0) as ViewGroup).getChildAt(i)
+            val p = tab.layoutParams as ViewGroup.MarginLayoutParams
+            p.setMargins(Common.dpToPx(8), 0, Common.dpToPx(8), 0)
+            tab.requestLayout()
+        }
+
         binding.refreshLayout.setOnRefreshListener {
                 if(Utils.checkConnectivity(this)) {
                 Intent(this@MainActivity, MainActivity::class.java).apply {

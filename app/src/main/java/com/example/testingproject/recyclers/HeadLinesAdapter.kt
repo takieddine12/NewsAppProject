@@ -28,7 +28,7 @@ class HeadLinesAdapter(private var headlinesOnListener: HeadlinesOnListener) : P
     }
     class DiffutilCallBack : DiffUtil.ItemCallback<HeadlinesModel>() {
         override fun areItemsTheSame(oldItem: HeadlinesModel, newItem: HeadlinesModel): Boolean {
-           return oldItem.articles[0].title == newItem.articles[0].title
+           return oldItem.articles?.get(0)?.title == newItem.articles?.get(0)?.title
         }
 
         override fun areContentsTheSame(oldItem: HeadlinesModel, newItem: HeadlinesModel): Boolean {

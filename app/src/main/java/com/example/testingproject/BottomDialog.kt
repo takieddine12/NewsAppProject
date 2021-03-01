@@ -5,13 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import androidx.paging.ExperimentalPagingApi
 import com.example.testingproject.databinding.CustomdialogBinding
 import com.example.testingproject.mvvm.MainViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
+@ExperimentalPagingApi
 class BottomDialog() : BottomSheetDialogFragment() {
+
     private lateinit var mainViewModel: MainViewModel
     private lateinit var binding : CustomdialogBinding
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
