@@ -47,10 +47,10 @@ class HeadLinesAdapter(private var headlinesOnListener: HeadlinesOnListener) : P
         CoroutineScope(Dispatchers.Main).launch {
            delay(2000)
             holder.headlinesRowLayoutBinding.headlinesProgressBar.visibility = View.INVISIBLE
-            holder.headlinesRowLayoutBinding.headlines = headline
-            holder.headlinesRowLayoutBinding.listener = headlinesOnListener
-
         }
+
+        holder.headlinesRowLayoutBinding.headlines = headline
+        holder.headlinesRowLayoutBinding.listener = headlinesOnListener
     }
 
 }

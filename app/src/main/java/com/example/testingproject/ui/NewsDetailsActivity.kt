@@ -25,19 +25,17 @@ class NewsDetailsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityNewsDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setSupportActionBar(binding.toolbar)
 
-            val intent = intent
-            intent?.let {
+        val intent = intent
+        intent?.let {
                 binding.apply {
-                    setAuthor.text = it.getStringExtra("author")
+                    setAuthor.text = StringBuilder().append("Author").append(" ").append(it.getStringExtra("author")).toString()
                     favdescription.text = it.getStringExtra("description")
                     favtitle.text = it.getStringExtra("title")
-                    dateText.text = it.getStringExtra("date")
+                    textDate.text = it.getStringExtra("date")
                     Picasso.get().load(it.getStringExtra("imgUrl")).fit().into(favImage)
                 }
             }
-
 
         if (Utils.checkConnectivity(this)) {
             fab.setOnClickListener {

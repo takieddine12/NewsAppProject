@@ -52,7 +52,6 @@ class SettingsActivity : AppCompatActivity() {
                     preferenceManager.findPreference("spanish")!!
                 val englishCheckBox: CheckBoxPreference =
                     preferenceManager.findPreference("english")!!
-                val switch: SwitchPreference = preferenceManager.findPreference("switch")!!
 
                 val sharedPreferences =
                     requireContext().getSharedPreferences("prefs", Context.MODE_PRIVATE)
@@ -106,28 +105,6 @@ class SettingsActivity : AppCompatActivity() {
                             }
                             Intent(requireContext(), MainActivity::class.java).apply {
                                 startActivity(this)
-                            }
-                        }
-                        true
-                    }
-                switch.onPreferenceChangeListener =
-                    Preference.OnPreferenceChangeListener { preference, newValue ->
-                        val modesPrefs = requireContext().getSharedPreferences("modes",Context.MODE_PRIVATE)
-                        val modesEditor = modesPrefs.edit()
-                        val isSwitchChecked = newValue as Boolean
-                        if (isSwitchChecked) {
-                            modesEditor.apply {
-                                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                                putBoolean("mode",true)
-                                apply()
-                                switch.title = getString(R.string.darkmod)
-                            }
-                        } else {
-                            modesEditor.apply {
-                                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                                putBoolean("mode", false)
-                                apply()
-                                switch.title = getString(R.string.lightmode)
                             }
                         }
                         true

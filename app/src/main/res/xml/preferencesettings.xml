@@ -21,14 +21,5 @@
         android:key="english"
         />
 
-    <Preference
-        android:title="Dark Mode"
-        android:textColor="@android:color/holo_red_dark"
-        app:allowDividerAbove="true"/>
-    <SwitchPreference
-        android:key="switch"
-        android:title="Tured OFF"/>
-
-
 
 </PreferenceScreen>
