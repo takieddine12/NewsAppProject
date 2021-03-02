@@ -15,6 +15,8 @@ import com.example.testingproject.mvvm.MainViewModel
 import com.example.testingproject.databinding.FavRowLayoutBinding
 import com.example.testingproject.models.FavNewsModel
 import com.example.testingproject.newslistener.FavOnListener
+import com.squareup.picasso.Picasso
+import timber.log.Timber
 
 class FavNewsAdapter(var context: Context,var list : List<FavNewsModel>) :
     RecyclerView.Adapter<FavNewsAdapter.ViewHolder>() {
@@ -45,9 +47,11 @@ class FavNewsAdapter(var context: Context,var list : List<FavNewsModel>) :
                     putExtra("author",favNewsModel.author)
                     putExtra("title",favNewsModel.title)
                     putExtra("description",favNewsModel.description)
-                    putExtra("imgurl",favNewsModel.urlToImage)
+                    putExtra("imgUrl",favNewsModel.urlToImage)
                     putExtra("date",favNewsModel.publishedAt)
                     context.startActivity(this)
+
+                    Timber.d("Img Url ${favNewsModel.urlToImage}")
                 }
             }
         }

@@ -59,7 +59,6 @@ class NewsFragment : Fragment() {
                     putExtra("description", allNewsModel?.description)
                     putExtra("imgUrl", allNewsModel.urlToImage)
                     putExtra("date", allNewsModel.publishedAt)
-                    binding.fabMenu.collapse()
                     startActivity(this)
                 }
             }
@@ -75,24 +74,7 @@ class NewsFragment : Fragment() {
                 }
             }
         }
-        binding.deleteMenu.setOnClickListener {
-            BottomDialog().apply {
-                show(parentFragmentManager, "Suggestions Deletion")
-                binding.fabMenu.collapse()
-            }
-        }
-        binding.settingsMenu.setOnClickListener {
-            Intent(requireContext(), SettingsActivity::class.java).apply {
-                startActivity(this)
-            }
-            binding.fabMenu.collapse()
-        }
-        binding.favNews.setOnClickListener {
-            Intent(requireContext(), FavNewsActivity::class.java).apply {
-                addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                startActivity(this)
-            }
-        }
+
 
         sharedViewModel.getQuery().observe(viewLifecycleOwner, Observer {
             fetchData(it.toLowerCase(Locale.ROOT))

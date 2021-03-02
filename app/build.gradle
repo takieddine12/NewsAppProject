@@ -52,6 +52,9 @@ dependencies {
     def paging_version = "3.0.0-beta01"
 
 
+    //Bottom Bar Library
+    implementation 'it.sephiroth.android.library.bottomnavigation:bottom-navigation:3.0.0'
+
     //Shape Porter Library
     implementation 'com.github.siyamed:android-shape-imageview:0.9.+@aar'
 

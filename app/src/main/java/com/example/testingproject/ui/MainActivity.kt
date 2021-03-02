@@ -11,13 +11,17 @@ import android.speech.RecognizerIntent
 import android.util.DisplayMetrics
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.ViewModelProviders
 import androidx.paging.ExperimentalPagingApi
-import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import com.example.testingproject.R
 import com.example.testingproject.databinding.ActivityMainBinding
 import com.example.testingproject.extras.Common
@@ -33,6 +37,7 @@ import java.util.*
 @AndroidEntryPoint
 @ExperimentalPagingApi
 class MainActivity : AppCompatActivity() {
+    private lateinit var fragmentStatePagerAdapter: FragmentStateAdapter
     private lateinit var sharedViewModel: SharedViewModel
     private var _binding : ActivityMainBinding? = null
     private val binding get() = _binding!!
@@ -79,17 +84,28 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        binding.nav.setOnNavigationItemSelectedListener {
+            when(it.itemId) {
+                R.id.settings -> {
+                    Intent(this@MainActivity, SettingsActivity::class.java).apply {
+                        startActivity(this)
+                    }
+                }
+                R.id.fav -> {
+                    Intent(this@MainActivity, FavNewsActivity::class.java).apply {
+                        startActivity(this)
+                    }
+                }
+            }
+            true
+        }
     }
-
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.unique_menu, menu)
         val menuItem = menu?.findItem(R.id.language)
-        if(binding.mainViewPager.currentItem == 0){
-            menuItem?.isVisible = false
-        } else if (binding.mainViewPager.currentItem == 1){
-            menuItem?.isVisible = true
-        }
+
+        menuItem?.isVisible  = binding.mainViewPager.currentItem != 0
 
         return true
     }
@@ -121,18 +137,15 @@ class MainActivity : AppCompatActivity() {
 
     }
     private fun getCurrentVisibleFragment(newText: String?){
+
         if(binding.mainViewPager.currentItem == 0){
-                sharedViewModel.setQuery(newText?.toLowerCase()!!)
-            } else {
-                sharedViewModel.setQuery(newText?.toLowerCase()!!)
+            sharedViewModel.setQuery(newText?.toLowerCase()!!)
+        } else {
+            sharedViewModel.setQuery(newText?.toLowerCase()!!)
         }
+
     }
-    private fun getCurrentFragment() : Fragment {
-        val fragmentsList = arrayListOf<Fragment>()
-        fragmentsList.add(0, NewsFragment())
-        fragmentsList.add(1, HeadlinesFragment())
-        return fragmentsList[0]
-    }
+
     @SuppressLint("ObsoleteSdkInt")
     private fun updateResources(){
         val prefs = getSharedPreferences("prefs", Context.MODE_PRIVATE)

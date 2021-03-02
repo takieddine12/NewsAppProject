@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-        <LinearLayout
+    <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
@@ -16,52 +16,15 @@
                 android:id="@+id/newsRecycler"/>
 
         </LinearLayout>
-       <TextView
+    <TextView
         android:id="@+id/noDataNews"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:fontFamily="@font/rubik_medium"
         android:gravity="center"
-           android:visibility="gone"
+        android:visibility="gone"
         android:text="@string/no_data_found"
         android:textSize="19sp" />
-        <com.getbase.floatingactionbutton.FloatingActionsMenu
-            android:id="@+id/fabMenu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="10dp"
-            app:fab_addButtonPlusIconColor="@color/white"
-            app:fab_addButtonColorNormal="@color/colorPrimary"
-            style="@style/CustomFabStyle">
-            <com.getbase.floatingactionbutton.FloatingActionButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:fab_colorNormal="@color/blackColor"
-                app:fab_icon="@drawable/ic_baseline_settings_24"
-                app:fab_title="Settings Label"
-                android:id="@+id/settingsMenu"
-                app:fabSize="normal"
-                />
-            <com.getbase.floatingactionbutton.FloatingActionButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:fab_title="Delete Label"
-                android:id="@+id/deleteMenu"
-                app:fab_icon="@drawable/ic_baseline_delete_24"
-                app:fab_colorNormal="@color/blackColor"
-                app:fabSize="normal"
-                />
 
-            <com.getbase.floatingactionbutton.FloatingActionButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:fab_title="Delete Label"
-                android:id="@+id/favNews"
-                app:fab_icon="@drawable/ic_favorite"
-                app:fab_colorNormal="@color/blackColor"
-                app:fabSize="normal"
-                />
-        </com.getbase.floatingactionbutton.FloatingActionsMenu>
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

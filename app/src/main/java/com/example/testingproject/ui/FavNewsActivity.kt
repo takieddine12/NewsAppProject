@@ -46,45 +46,34 @@ class FavNewsActivity : AppCompatActivity() {
             adapter = FavNewsAdapter(this, list!!)
             binding.favRecycler.adapter = adapter
         })
-        deleteOnSwipe()
-    }
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.favmenu, menu)
-        return true
-    }
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.deleteall -> {
-                if(adapter!!.itemCount == 0) {
-                    this@FavNewsActivity.showWarningToast(getString(R.string.nodataddedyet))
-                }else {
-                    AlertDialog.Builder(this)
-                        .setTitle(getString(R.string.deletenews))
-                        .setMessage(getString(R.string.areyousureyouwanttodeleteall))
-                        .setPositiveButton(getString(R.string.yes)){ dialog, which ->
-                          //  mainViewModel!!.deleteAllNews()
-                            this@FavNewsActivity.showToast(getString(R.string.allarticlesdeleted))
-                        }
-                        .setNegativeButton(getString(R.string.no)){ dialog, which ->
-                            dialog.dismiss()
-                        }.create().show()
-                }
-            }
-            android.R.id.home -> {
-                Intent(this, MainActivity::class.java).apply {
-                    startActivity(this)
-                }
+        binding.deleteAll.setOnClickListener {
+            if(adapter!!.itemCount == 0) {
+                this@FavNewsActivity.showWarningToast(getString(R.string.nodataddedyet))
+            }else {
+                AlertDialog.Builder(this)
+                    .setTitle(getString(R.string.deletenews))
+                    .setMessage(getString(R.string.areyousureyouwanttodeleteall))
+                    .setPositiveButton(getString(R.string.yes)){ dialog, which ->
+                        mainViewModel!!.deleteAllNews()
+                        this@FavNewsActivity.showToast(getString(R.string.allarticlesdeleted))
+                    }
+                    .setNegativeButton(getString(R.string.no)){ dialog, which ->
+                        dialog.dismiss()
+                    }
+                    .create()
+                    .show()
             }
         }
-        return true
+        deleteOnSwipe()
     }
+
     private fun deleteOnSwipe() {
         val itemTouchHelper = object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.LEFT,ItemTouchHelper.RIGHT) {
             override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
                 return false
             }
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-               // mainViewModel!!.deletePerFavNews(list!![viewHolder.adapterPosition])
+                mainViewModel!!.deletePerFavNews(list!![viewHolder.adapterPosition])
                 this@FavNewsActivity.showToast(getString(R.string.articlessuccessfullydeleted))
             }
         }

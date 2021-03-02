@@ -18,7 +18,7 @@ interface NewsDao {
     suspend fun persistNews(list: ArticleX)
 
     @Query("DELETE FROM newsTable")
-    fun deleteAllNews()
+    suspend fun deleteAllNews()
 
 
 }

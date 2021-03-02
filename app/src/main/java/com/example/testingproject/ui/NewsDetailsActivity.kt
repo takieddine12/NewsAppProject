@@ -3,6 +3,7 @@ package com.example.testingproject.ui
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.paging.ExperimentalPagingApi
 import com.example.testingproject.showToast
 import com.example.testingproject.Utils
@@ -37,17 +38,44 @@ class NewsDetailsActivity : AppCompatActivity() {
                 }
             }
 
+
+        // TODO : Get Saved Boolean Value
+        mainViewModel?.getLiveData()?.observe(this, Observer {
+            if (it.isNullOrEmpty()) {
+                binding.checkBox.isChecked = false
+            } else {
+                for (element in it) {
+                    if(element.author.equals(intent.getStringExtra("author"))){
+                        if (element.isSaved!!) {
+                            binding.checkBox.isChecked = element.isSaved!!
+                        } else {
+                            binding.checkBox.isChecked = element.isSaved!!
+                        }
+                    } else {
+                        binding.checkBox.isChecked = false
+                    }
+                }
+            }
+        })
         if (Utils.checkConnectivity(this)) {
-            fab.setOnClickListener {
-                val favNewsModel = FavNewsModel(
-                    intent.getStringExtra("author"),
-                    intent.getStringExtra("title"),
-                    intent.getStringExtra("imgurl"),
-                    intent.getStringExtra("date"),
-                    intent.getStringExtra("description")
-                )
-                mainViewModel!!.insertNews(favNewsModel)
-                this.showToast("Article Successfully Added")
+            binding.checkBox.setOnCheckedChangeListener {
+                    buttonView, isChecked ->
+                if(buttonView.isPressed){
+
+                    val favNewsModel = FavNewsModel(
+                        intent.getStringExtra("author"),
+                        intent.getStringExtra("title"),
+                        intent.getStringExtra("imgUrl"),
+                        intent.getStringExtra("date"),
+                        intent.getStringExtra("description"),
+                        isChecked)
+
+                    if(isChecked){
+                        mainViewModel!!.insertNews(favNewsModel)
+                    } else {
+                        mainViewModel?.deletePerFavNews(favNewsModel)
+                    }
+                }
             }
         }
     }

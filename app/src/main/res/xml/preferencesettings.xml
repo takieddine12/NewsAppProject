@@ -4,7 +4,7 @@
 
     <PreferenceCategory
         android:title="@string/alllanguages"
-        android:textColor="@android:color/holo_red_dark"
+        android:icon="@drawable/ic_language_black"
         />
     <CheckBoxPreference
         android:title="@string/frenchlang"

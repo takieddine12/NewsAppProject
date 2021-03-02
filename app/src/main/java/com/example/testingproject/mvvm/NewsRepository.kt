@@ -43,7 +43,7 @@ class  NewsRepository @Inject constructor(
 
     // TODO : News Dao Section
      fun getAllNews() = newsDao.getAllNews()
-     fun deleteAllNews() = newsDao.deleteAllNews()
+     suspend fun deleteAllNews() = newsDao.deleteAllNews()
      suspend fun insertAllNews(list : ArticleX)   = newsDao.persistNews(list)
 
 

@@ -6,6 +6,7 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.testingproject.ui.fragments.NewsFragment
 import com.example.testingproject.ui.fragments.HeadlinesFragment
+import kotlinx.coroutines.newFixedThreadPoolContext
 
 
 class ViewPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
@@ -16,8 +17,12 @@ class ViewPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapte
 
     @ExperimentalPagingApi
     override fun createFragment(position: Int): Fragment {
-        return if(position == 0)
+        if(position == 0){
             NewsFragment()
-        else HeadlinesFragment()
+        } else {
+            HeadlinesFragment()
+        }
+        return NewsFragment()
     }
+
 }

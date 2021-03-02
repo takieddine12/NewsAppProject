@@ -74,7 +74,7 @@ class HeadlinesFragment : Fragment() {
                             putExtra("description", headlinesModel.description)
                             putExtra("imgUrl", headlinesModel.urlToImage)
                             putExtra("date", headlinesModel.publishedAt)
-                            binding.fabMenu.collapse()
+
                             startActivity(this)
                     }
 
@@ -94,24 +94,6 @@ class HeadlinesFragment : Fragment() {
 
         }
 
-        binding.deleteMenu.setOnClickListener {
-            BottomDialog().apply {
-                show(requireFragmentManager(), "Suggestions Deletion")
-                binding.fabMenu.collapse()
-            }
-        }
-        binding.settingsMenu.setOnClickListener {
-            Intent(requireContext(), SettingsActivity::class.java).apply {
-                startActivity(this)
-            }
-            binding.fabMenu.collapse()
-        }
-        binding.favNews.setOnClickListener {
-            Intent(requireContext(), FavNewsActivity::class.java).apply {
-                addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                startActivity(this)
-            }
-        }
 
         sharedViewModel.getQuery().observe(viewLifecycleOwner, Observer {
              fetchData(it)
