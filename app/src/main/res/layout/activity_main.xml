@@ -29,7 +29,7 @@
             android:id="@+id/searchView"
             android:goIcon="@drawable/ic_baseline_search_24"
             android:layout_width="match_parent"
-            android:layout_height="55dp"
+            android:layout_height="50dp"
             android:queryHint="Make a search"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
@@ -42,15 +42,16 @@
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
-        app:tabIndicatorColor="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
         style="@style/ChipTabLayout"
+        app:tabIndicatorColor="@color/white"
         app:tabSelectedTextColor="@color/white"
         android:layout_marginTop="20dp"
         app:tabTextColor="#000000"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:layout_width="match_parent"
-        android:layout_height="60dp" />
+        />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/main_view_pager"

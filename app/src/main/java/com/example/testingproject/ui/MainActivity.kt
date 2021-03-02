@@ -7,23 +7,23 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.LocaleList
+import android.speech.RecognizerIntent
 import android.util.DisplayMetrics
+import android.view.Menu
+import android.view.MenuItem
 import android.view.ViewGroup
 import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.paging.ExperimentalPagingApi
+import androidx.viewpager.widget.ViewPager
 import com.example.testingproject.R
-import com.example.testingproject.Utils
 import com.example.testingproject.databinding.ActivityMainBinding
 import com.example.testingproject.extras.Common
 import com.example.testingproject.mvvm.SharedViewModel
-import com.example.testingproject.showWarningToast
 import com.example.testingproject.ui.fragments.HeadlinesFragment
 import com.example.testingproject.ui.fragments.NewsFragment
-import com.example.testingproject.ui.fragments.NewsFragment_GeneratedInjector
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
@@ -42,7 +42,6 @@ class MainActivity : AppCompatActivity() {
         _binding = ActivityMainBinding.inflate(layoutInflater)
         updateResources()
         setContentView(binding.root)
-
         setSupportActionBar(binding.toolbar)
 
         sharedViewModel = ViewModelProviders.of(this)[SharedViewModel::class.java]
@@ -68,37 +67,71 @@ class MainActivity : AppCompatActivity() {
             tab.requestLayout()
         }
 
-
-
-
         // TODO : Query With SearchView
-
-        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-               getCurrentVisibleFragment(newText)
+                getCurrentVisibleFragment(newText)
                 return true
             }
         })
+
     }
 
 
-    private fun getCurrentVisibleFragment(newText : String?){
-        val list = mutableListOf<Fragment>()
-        list.add(0,NewsFragment())
-        list.add(1,HeadlinesFragment())
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.unique_menu, menu)
+        val menuItem = menu?.findItem(R.id.language)
+        if(binding.mainViewPager.currentItem == 0){
+            menuItem?.isVisible = false
+        } else if (binding.mainViewPager.currentItem == 1){
+            menuItem?.isVisible = true
+        }
 
-        for(i in 0 until list.size){
-            val fragment = list[i]
-            if(fragment is NewsFragment){
+        return true
+    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+       when(item.itemId){
+           R.id.refresh -> {
+               Intent(this, MainActivity::class.java).apply {
+                   flags = Intent.FLAG_ACTIVITY_NO_ANIMATION
+                   startActivity(this)
+               }
+           }
+           R.id.voice -> {
+               voiceSearch()
+           }
+           R.id.language -> {
+           }
+       }
+        return true
+    }
+    private fun voiceSearch() {
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        intent.putExtra(
+            RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+            RecognizerIntent.LANGUAGE_MODEL_FREE_FORM
+        )
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Pass a search")
+        startActivityForResult(intent, SEARCH_REQUEST_CODE)
+
+    }
+    private fun getCurrentVisibleFragment(newText: String?){
+        if(binding.mainViewPager.currentItem == 0){
                 sharedViewModel.setQuery(newText?.toLowerCase()!!)
             } else {
                 sharedViewModel.setQuery(newText?.toLowerCase()!!)
-            }
         }
+    }
+    private fun getCurrentFragment() : Fragment {
+        val fragmentsList = arrayListOf<Fragment>()
+        fragmentsList.add(0, NewsFragment())
+        fragmentsList.add(1, HeadlinesFragment())
+        return fragmentsList[0]
     }
     @SuppressLint("ObsoleteSdkInt")
     private fun updateResources(){
@@ -126,11 +159,28 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == SEARCH_REQUEST_CODE && resultCode == RESULT_OK) {
+            val voiceList = data!!.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+            for (i in 0 until voiceList!!.size) {
+                if(binding.mainViewPager.currentItem == 0){
+                    sharedViewModel.setQuery(voiceList[0].toLowerCase(Locale.ROOT))
+                } else if(binding.mainViewPager.currentItem == 1){
+                    sharedViewModel.setQuery(voiceList[0].toLowerCase(Locale.ROOT))
+                }
+            }
+        }
+    }
     override fun onBackPressed() {
         moveTaskToBack(true)
     }
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+    companion object {
+        const val  SEARCH_REQUEST_CODE = 1010
     }
 }

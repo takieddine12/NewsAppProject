@@ -1,25 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
 
     <item android:title=""
         android:id="@+id/refresh"
         android:icon="@drawable/ic_baseline_refresh_24"
-        app:showAsAction="always"/>
-
-
+        app:showAsAction="ifRoom"/>
 
     <item android:title=""
-        android:id="@+id/headlinesVoice"
+        android:id="@+id/voice"
         android:icon="@drawable/ic_keyboard_voice_black_24dp"
         app:showAsAction="ifRoom"/>
 
     <item android:id="@+id/language"
         android:icon="@drawable/ic_language_black_24dp"
         app:showAsAction="ifRoom"
-        android:title="languagemenu"
-        tools:ignore="HardcodedText" />
-
+        android:title=""
+        />
 </menu>

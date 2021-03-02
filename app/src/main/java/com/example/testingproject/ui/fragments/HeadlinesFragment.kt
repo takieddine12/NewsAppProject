@@ -119,37 +119,16 @@ class HeadlinesFragment : Fragment() {
     }
 
     private fun fetchData() {
-           lifecycleScope.launchWhenStarted {
+        lifecycleScope.launchWhenStarted {
                mainViewModel.getHeadLines("us",Utils.API_KEY).collect {
                    binding.noDataHeadlines.visibility = View.INVISIBLE
                    headlinesAdapter.submitData(pagingData = it)
-                   binding.headlinesRecycler.adapter = headlinesAdapter
+
                    }
            }
-
-    }
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
+        binding.headlinesRecycler.adapter = headlinesAdapter
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.filter_menu,menu)
-
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
-            R.id.language -> {
-                showFilterDialog()
-            }
-            R.id.headlinesVoice -> {
-                voiceSearch()
-            }
-        }
-        return true
-    }
 
     private fun showFilterDialog() {
 
@@ -190,7 +169,6 @@ class HeadlinesFragment : Fragment() {
            return this
        }
     }
-
     private fun fetchData(query: String) {
 
         lifecycleScope.launchWhenStarted {
@@ -200,26 +178,7 @@ class HeadlinesFragment : Fragment() {
             }
         }
     }
-    private fun voiceSearch() {
-        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Pass a search")
-        startActivityForResult(intent, SEARCH_REQUEST_CODE)
 
-    }
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == SEARCH_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            val voiceList = data!!.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
-            for (i in 0 until voiceList!!.size) {
-                fetchData(voiceList[0].toLowerCase(Locale.ROOT))
-            }
-        }
-    }
-    companion object{
-        const val SEARCH_REQUEST_CODE = 1001
-    }
 }
 
 
@@ -240,7 +199,29 @@ class HeadlinesFragment : Fragment() {
 
 
 
+/*
+  override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.filter_menu,menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.language -> {
+                showFilterDialog()
+            }
+            R.id.headlinesVoice -> {
+                voiceSearch()
+            }
+        }
+        return false
+    }
+ */
 
 
 

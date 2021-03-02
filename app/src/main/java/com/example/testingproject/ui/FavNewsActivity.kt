@@ -36,7 +36,6 @@ class FavNewsActivity : AppCompatActivity() {
 
         binding = ActivityFavNewsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setSupportActionBar(binding.favToolbar)
         supportActionBar?.setHomeButtonEnabled(true)
 
         binding.favRecycler.layoutManager = LinearLayoutManager(this)

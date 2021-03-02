@@ -28,7 +28,7 @@
                 android:layout_height="30dp"
                 android:visibility="visible"
                 android:layout_gravity="center"
-                android:layout_marginTop="30dp"/>
+                android:layout_marginTop="80dp"/>
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -42,6 +42,7 @@
                     android:id="@+id/imageView2"
                     android:layout_width="match_parent"
                     android:layout_height="130dp"
+                    android:layout_marginTop="4dp"
                     android:background="@drawable/placeholder"
                     app:general="@{newsy.urlToImage}"
                     app:layout_constraintBottom_toTopOf="@+id/guideline8"
@@ -57,6 +58,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:layout_marginStart="8dp"
+                    android:layout_marginTop="2dp"
                     android:layout_marginEnd="8dp"
                     android:ellipsize="end"
                     android:gravity="center"

@@ -3,7 +3,9 @@ package com.example.testingproject.ui
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.paging.ExperimentalPagingApi
 import com.example.testingproject.R
@@ -44,7 +46,9 @@ class SplashActivity : AppIntro2() {
                 sliderPage.descriptionColor = Color.GRAY
                 sliderPage.imageDrawable = news_images[i]
                 sliderPage.backgroundColor = Color.WHITE
-                sliderPage.titleTypeface = "zerofont.ttf"
+                sliderPage.titleTypefaceFontRes = R.font.rubik_medium
+                sliderPage.descriptionTypefaceFontRes = R.font.rubik_medium
+
                 addSlide(AppIntroFragment.newInstance(sliderPage))
 
                 setIndicatorColor(Color.BLACK, Color.GRAY)
