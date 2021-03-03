@@ -32,6 +32,8 @@ class  NewsRepository @Inject constructor(
     suspend fun insertFavNews(favNewsModel: FavNewsModel) = dao.insertFavNews(favNewsModel)
     suspend fun deleteFavPerNews(favNewsModel: FavNewsModel) = dao.deletePerFavNews(favNewsModel)
     suspend fun deleteAllFavNews() = dao.deleteAllFavNews()
+    suspend  fun deletePerAuthor(author : String ) = dao.deletePerAuthor(author)
+    suspend fun deleteDuplicateEntries() = dao.deleteDuplicateEntries()
     fun getLiveData() = dao.getAllFavNews()
 
     // TODO : Headlines Dao Section

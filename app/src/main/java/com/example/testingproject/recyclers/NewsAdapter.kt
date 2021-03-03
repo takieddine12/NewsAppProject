@@ -44,11 +44,6 @@ class NewsAdapter (var newsOnListener: NewsOnListener) : PagingDataAdapter<Artic
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val model = getItem(position)
-
-        CoroutineScope(Dispatchers.Main).launch {
-            delay(2000)
-            holder.newsRowLayoutBinding.newsProgressBar.visibility = View.INVISIBLE
-        }
         holder.newsRowLayoutBinding.newsy = model
         holder.newsRowLayoutBinding.listener = newsOnListener
     }

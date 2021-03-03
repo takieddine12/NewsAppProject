@@ -38,16 +38,7 @@ class HeadLinesAdapter(private var headlinesOnListener: HeadlinesOnListener) : P
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-       val headline = getItem(position)
-//        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.getDefault())
-//        val date = simpleDateFormat.parse(headline!!.publishedAt!!)
-//        val formatttedDate = simpleDateFormat.format(date!!)
-//        headline.publishedAt = formatttedDate
-
-        CoroutineScope(Dispatchers.Main).launch {
-           delay(2000)
-            holder.headlinesRowLayoutBinding.headlinesProgressBar.visibility = View.INVISIBLE
-        }
+        val headline = getItem(position)
 
         holder.headlinesRowLayoutBinding.headlines = headline
         holder.headlinesRowLayoutBinding.listener = headlinesOnListener

@@ -105,7 +105,27 @@ class MainActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.unique_menu, menu)
         val menuItem = menu?.findItem(R.id.language)
 
-        menuItem?.isVisible  = binding.mainViewPager.currentItem != 0
+        menuItem?.isVisible = false
+        binding.mainViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+                super.onPageScrolled(position, positionOffset, positionOffsetPixels)
+            }
+
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                when(position){
+                    0 -> {
+                        menuItem?.isVisible = false
+                    }
+                    1 -> {
+                        menuItem?.isVisible = true
+                    }
+                }
+            }
+            override fun onPageScrollStateChanged(state: Int) {
+                super.onPageScrollStateChanged(state)
+            }
+        })
 
         return true
     }
@@ -138,11 +158,25 @@ class MainActivity : AppCompatActivity() {
     }
     private fun getCurrentVisibleFragment(newText: String?){
 
-        if(binding.mainViewPager.currentItem == 0){
-            sharedViewModel.setQuery(newText?.toLowerCase()!!)
-        } else {
-            sharedViewModel.setQuery(newText?.toLowerCase()!!)
-        }
+        binding.mainViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+                super.onPageScrolled(position, positionOffset, positionOffsetPixels)
+            }
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                when(position){
+                    0 -> {
+                        sharedViewModel.setQuery(newText?.toLowerCase()!!)
+                    }
+                    1 -> {
+                        sharedViewModel.setQuery(newText?.toLowerCase()!!)
+                    }
+                }
+            }
+            override fun onPageScrollStateChanged(state: Int) {
+                super.onPageScrollStateChanged(state)
+            }
+        })
 
     }
 
@@ -178,11 +212,28 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == SEARCH_REQUEST_CODE && resultCode == RESULT_OK) {
             val voiceList = data!!.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
             for (i in 0 until voiceList!!.size) {
-                if(binding.mainViewPager.currentItem == 0){
-                    sharedViewModel.setQuery(voiceList[0].toLowerCase(Locale.ROOT))
-                } else if(binding.mainViewPager.currentItem == 1){
-                    sharedViewModel.setQuery(voiceList[0].toLowerCase(Locale.ROOT))
-                }
+                binding.mainViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
+                    override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+                        super.onPageScrolled(position, positionOffset, positionOffsetPixels)
+                    }
+
+                    override fun onPageSelected(position: Int) {
+                        super.onPageSelected(position)
+                        when(position){
+                            0 -> {
+                                sharedViewModel.setQuery(voiceList[0].toLowerCase(Locale.ROOT))
+                            }
+                            1 -> {
+                                sharedViewModel.setQuery(voiceList[0].toLowerCase(Locale.ROOT))
+                            }
+                        }
+                    }
+
+                    override fun onPageScrollStateChanged(state: Int) {
+                        super.onPageScrollStateChanged(state)
+                    }
+                })
+
             }
         }
     }

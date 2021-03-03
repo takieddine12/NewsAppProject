@@ -20,12 +20,14 @@ class NewsDetailsActivity : AppCompatActivity() {
 
     private val mainViewModel: MainViewModel? by viewModels()
     lateinit var binding: ActivityNewsDetailsBinding
-
+    private lateinit var listOfNews : MutableList<FavNewsModel>
     @ExperimentalPagingApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityNewsDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        listOfNews = mutableListOf()
 
         val intent = intent
         intent?.let {
@@ -35,6 +37,16 @@ class NewsDetailsActivity : AppCompatActivity() {
                     favtitle.text = it.getStringExtra("title")
                     textDate.text = it.getStringExtra("date")
                     Picasso.get().load(it.getStringExtra("imgUrl")).fit().into(favImage)
+
+                    val favNewsModel = FavNewsModel(
+                        author = it.getStringExtra("author"),
+                        title = it.getStringExtra("title"),
+                        urlToImage = it.getStringExtra("imgUrl"),
+                        publishedAt = it.getStringExtra("date"),
+                        description = it.getStringExtra("description"),
+                        isSaved = false
+                    )
+                    listOfNews.add(favNewsModel)
                 }
             }
 
@@ -45,11 +57,13 @@ class NewsDetailsActivity : AppCompatActivity() {
                 binding.checkBox.isChecked = false
             } else {
                 for (element in it) {
-                    if(element.author.equals(intent.getStringExtra("author"))){
+                    if(element.publishedAt.equals(intent.getStringExtra("date"))){
                         if (element.isSaved!!) {
                             binding.checkBox.isChecked = element.isSaved!!
+                            break
                         } else {
                             binding.checkBox.isChecked = element.isSaved!!
+                            break
                         }
                     } else {
                         binding.checkBox.isChecked = false
@@ -58,22 +72,18 @@ class NewsDetailsActivity : AppCompatActivity() {
             }
         })
         if (Utils.checkConnectivity(this)) {
-            binding.checkBox.setOnCheckedChangeListener {
-                    buttonView, isChecked ->
+            binding.checkBox.setOnCheckedChangeListener { buttonView, isChecked ->
                 if(buttonView.isPressed){
-
-                    val favNewsModel = FavNewsModel(
-                        intent.getStringExtra("author"),
-                        intent.getStringExtra("title"),
-                        intent.getStringExtra("imgUrl"),
-                        intent.getStringExtra("date"),
-                        intent.getStringExtra("description"),
-                        isChecked)
-
                     if(isChecked){
-                        mainViewModel!!.insertNews(favNewsModel)
+                        listOfNews.map {
+                            it.isSaved = isChecked
+                            mainViewModel!!.insertNews(it)
+                        }
                     } else {
-                        mainViewModel?.deletePerFavNews(favNewsModel)
+                        listOfNews.map {
+                            it.isSaved = isChecked
+                            mainViewModel?.deletePerAuthor(it.author!!)
+                        }
                     }
                 }
             }

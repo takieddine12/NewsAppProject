@@ -41,6 +41,7 @@ class FavNewsActivity : AppCompatActivity() {
         binding.favRecycler.layoutManager = LinearLayoutManager(this)
         binding.favRecycler.setHasFixedSize(true)
 
+        mainViewModel?.deleteDuplicateEntries()
         mainViewModel!!.getLiveData().observe(this, Observer {
             list = it
             adapter = FavNewsAdapter(this, list!!)
@@ -54,7 +55,7 @@ class FavNewsActivity : AppCompatActivity() {
                     .setTitle(getString(R.string.deletenews))
                     .setMessage(getString(R.string.areyousureyouwanttodeleteall))
                     .setPositiveButton(getString(R.string.yes)){ dialog, which ->
-                        mainViewModel!!.deleteAllNews()
+                        mainViewModel!!.deleteAllFavNews()
                         this@FavNewsActivity.showToast(getString(R.string.allarticlesdeleted))
                     }
                     .setNegativeButton(getString(R.string.no)){ dialog, which ->

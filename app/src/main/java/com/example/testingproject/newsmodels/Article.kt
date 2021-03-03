@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull
 data class Article(
     @PrimaryKey(autoGenerate = true)
     @NotNull
-    public var headlinesId: Long? = null,
+    var headlinesId: Long? = null,
     val author: String,
     val description: String,
     val publishedAt: String,

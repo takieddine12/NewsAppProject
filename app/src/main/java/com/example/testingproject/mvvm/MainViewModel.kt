@@ -76,7 +76,6 @@ class MainViewModel @Inject constructor(
              newsRepository.getAllNews()
         }.flow.cachedIn(viewModelScope)
     }
-
     fun getOfflineHeadlines() : Flow<PagingData<Article>> {
         return Pager(config = getConfig()){
             newsRepository.getAllHeadlines()
@@ -86,7 +85,6 @@ class MainViewModel @Inject constructor(
     // TODO : Dao Headlines Section
 
     suspend fun insertHeadlines(headlinesModel: Article) = newsRepository.insertHeadlines(headlinesModel)
-
     fun deleteAllHeadlines() = viewModelScope.launch {
             newsRepository.deleteAllHeadlines()
     }
@@ -106,6 +104,13 @@ class MainViewModel @Inject constructor(
 
     fun deletePerFavNews(favNewsModel: FavNewsModel) = viewModelScope.launch {
         newsRepository.deleteFavPerNews(favNewsModel)
+    }
+
+    fun deleteAllFavNews() = viewModelScope.launch {
+        newsRepository.deleteAllFavNews()
+    }
+    fun deletePerAuthor(author : String) = viewModelScope.launch {
+        newsRepository.deletePerAuthor(author)
     }
 
     fun getLiveData(): LiveData<List<FavNewsModel>> = newsRepository.getLiveData()
@@ -135,6 +140,10 @@ class MainViewModel @Inject constructor(
         )
     }
 
+
+    fun deleteDuplicateEntries() = viewModelScope.launch {
+         newsRepository.deleteDuplicateEntries()
+    }
 
 }
 

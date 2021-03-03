@@ -16,7 +16,14 @@ interface FavNewsDao {
     @Delete
     suspend fun deletePerFavNews(favNewsModel: FavNewsModel)
 
+    @Query("DELETE FROM fav_table Where author = :author ")
+    suspend fun deletePerAuthor(author : String)
+
     @Query("DELETE FROM fav_table")
     suspend fun deleteAllFavNews()
+
+    @Query("DELETE FROM fav_table WHERE favnewsId NOT IN (SELECT MIN(favnewsId) FROM fav_table GROUP BY author, title)")
+    suspend fun deleteDuplicateEntries()
+
 
 }
