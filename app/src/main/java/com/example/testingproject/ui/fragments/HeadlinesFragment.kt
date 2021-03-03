@@ -50,6 +50,7 @@ import java.util.*
 @AndroidEntryPoint
 @ExperimentalPagingApi
 class HeadlinesFragment : Fragment() {
+     private  var selectedLanguage = "us"
      private lateinit var sharedViewModel: SharedViewModel
      private lateinit var headlinesAdapter: HeadLinesAdapter
      private val mainViewModel: MainViewModel by viewModels()
@@ -74,92 +75,47 @@ class HeadlinesFragment : Fragment() {
                             putExtra("description", headlinesModel.description)
                             putExtra("imgUrl", headlinesModel.urlToImage)
                             putExtra("date", headlinesModel.publishedAt)
-
                             startActivity(this)
                     }
 
                 }
             })
         if(Utils.checkConnectivity(requireContext())){
-            fetchData()
+            fetchData(selectedLanguage)
         } else {
             lifecycleScope.launchWhenStarted {
                 mainViewModel.getOfflineHeadlines().collect {
-                    binding.noDataHeadlines.visibility = View.INVISIBLE
                     headlinesAdapter.submitData(it)
-                    binding.headlinesRecycler.adapter = headlinesAdapter
                 }
             }
-
+            binding.headlinesRecycler.adapter = headlinesAdapter
+            if(headlinesAdapter.itemCount == 0){
+                binding.noNews.visibility = View.VISIBLE
+            } else {
+                binding.noNews.visibility = View.INVISIBLE
+            }
 
         }
-
-
         sharedViewModel.getQuery().observe(viewLifecycleOwner, Observer {
-             fetchData(it)
+             selectedLanguage = it
+             fetchData(selectedLanguage)
         })
     }
 
-    private fun fetchData() {
+    private fun fetchData(selectedLanguage : String) {
         lifecycleScope.launchWhenStarted {
-               mainViewModel.getHeadLines("us",Utils.API_KEY).collect {
-                   binding.noDataHeadlines.visibility = View.INVISIBLE
+               mainViewModel.getHeadLines(selectedLanguage,Utils.API_KEY).collect {
                    headlinesAdapter.submitData(pagingData = it)
-
                    }
            }
         binding.headlinesRecycler.adapter = headlinesAdapter
-    }
-
-
-    private fun showFilterDialog() {
-
-        FilterDialog(activity).apply {
-            searchBoxHint = "Search"
-            toolbarTitle  = "Countries"
-            setList(countriesList())
-
-            show("code","name",
-                DialogListener.Single { selectedItem ->
-                    lifecycleScope.launch {
-                        mainViewModel.getHeadLines(selectedItem!!.name, Utils.API_KEY).collect {
-                            binding.noDataHeadlines.visibility = View.INVISIBLE
-                            headlinesAdapter.submitData(it)
-                            binding.headlinesRecycler.adapter = headlinesAdapter
-                        }
-                    }
-                })
+        if(headlinesAdapter.itemCount == 0){
+            binding.noNews.visibility = View.VISIBLE
+        } else {
+            binding.noNews.visibility = View.INVISIBLE
         }
     }
-    private fun countriesList() : List<String> {
-       arrayListOf<String>().apply {
-           add("ae")
-           add("ar")
-           add("at")
-           add("au")
-           add("be")
-           add("bg")
-           add("br")
-           add("ca")
-           add("ch")
-           add("cn")
-           add("co")
-           add("cu")
-           add("cz")
-           add("de")
-           add("en")
-           return this
-       }
-    }
-    private fun fetchData(query: String) {
 
-        lifecycleScope.launchWhenStarted {
-            mainViewModel.getHeadLines(query,Utils.API_KEY).collect { pagedList ->
-                headlinesAdapter.submitData(pagedList)
-                binding.headlinesRecycler.adapter = headlinesAdapter
-            }
-        }
-    }
 
 }
 

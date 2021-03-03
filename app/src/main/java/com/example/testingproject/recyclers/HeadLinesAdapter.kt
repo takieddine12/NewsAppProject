@@ -19,7 +19,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
-class HeadLinesAdapter(private var headlinesOnListener: HeadlinesOnListener) : PagingDataAdapter<Article, HeadLinesAdapter.ViewHolder>(DiffutilCallBack()) {
+class HeadLinesAdapter(private var headlinesOnListener: HeadlinesOnListener) : PagingDataAdapter<Article, HeadLinesAdapter.ViewHolder>(DiffCallBack()) {
 
     class ViewHolder(var headlinesRowLayoutBinding: HeadlineRowLayoutBinding) : RecyclerView.ViewHolder(headlinesRowLayoutBinding.root)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -27,7 +27,7 @@ class HeadLinesAdapter(private var headlinesOnListener: HeadlinesOnListener) : P
             LayoutInflater.from(parent.context), R.layout.headline_row_layout,parent,false)
         return ViewHolder(headlinesRowLayoutBinding)
     }
-    class DiffutilCallBack : DiffUtil.ItemCallback<Article>() {
+    class DiffCallBack : DiffUtil.ItemCallback<Article>() {
         override fun areItemsTheSame(oldItem: Article, newItem: Article): Boolean {
            return oldItem.title == newItem.title
         }

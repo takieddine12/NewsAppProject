@@ -70,8 +70,15 @@ class NewsFragment : Fragment() {
             lifecycleScope.launchWhenStarted {
                 mainViewModel.getOfflineNews().collect {
                     newsAdapter.submitData(it)
-                    binding.newsRecycler.adapter = newsAdapter
                 }
+            }
+            binding.newsRecycler.adapter = newsAdapter
+            if(newsAdapter.itemCount == 0){
+                binding.noNews.visibility = View.VISIBLE
+                Timber.d("Executed Here..visible")
+            } else {
+                binding.noNews.visibility = View.INVISIBLE
+                Timber.d("Executed Here..invisible")
             }
         }
 
@@ -84,10 +91,15 @@ class NewsFragment : Fragment() {
         lifecycleScope.launch {
               mainViewModel.getNews(query,Utils.API_KEY).collect {
                 newsAdapter.submitData(it)
-
             }
         }
+
         binding.newsRecycler.adapter = newsAdapter
+        if(newsAdapter.itemCount == -1){
+            binding.noNews.visibility = View.VISIBLE
+        } else {
+            binding.noNews.visibility = View.INVISIBLE
+        }
     }
 
 }

@@ -19,10 +19,14 @@ import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.lifecycleScope
 import androidx.paging.ExperimentalPagingApi
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.barisatalay.filterdialog.FilterDialog
+import com.barisatalay.filterdialog.model.DialogListener
 import com.example.testingproject.R
+import com.example.testingproject.Utils
 import com.example.testingproject.databinding.ActivityMainBinding
 import com.example.testingproject.extras.Common
 import com.example.testingproject.mvvm.SharedViewModel
@@ -31,13 +35,15 @@ import com.example.testingproject.ui.fragments.NewsFragment
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import java.util.*
 
 
 @AndroidEntryPoint
 @ExperimentalPagingApi
 class MainActivity : AppCompatActivity() {
-    private lateinit var fragmentStatePagerAdapter: FragmentStateAdapter
+    private var selectedPosition  = -1
     private lateinit var sharedViewModel: SharedViewModel
     private var _binding : ActivityMainBinding? = null
     private val binding get() = _binding!!
@@ -104,21 +110,21 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.unique_menu, menu)
         val menuItem = menu?.findItem(R.id.language)
-
         menuItem?.isVisible = false
         binding.mainViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
                 super.onPageScrolled(position, positionOffset, positionOffsetPixels)
             }
-
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 when(position){
                     0 -> {
                         menuItem?.isVisible = false
+                        selectedPosition = position
                     }
                     1 -> {
                         menuItem?.isVisible = true
+                        selectedPosition = position
                     }
                 }
             }
@@ -126,7 +132,6 @@ class MainActivity : AppCompatActivity() {
                 super.onPageScrollStateChanged(state)
             }
         })
-
         return true
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -141,6 +146,7 @@ class MainActivity : AppCompatActivity() {
                voiceSearch()
            }
            R.id.language -> {
+               showFilterDialog()
            }
        }
         return true
@@ -179,7 +185,6 @@ class MainActivity : AppCompatActivity() {
         })
 
     }
-
     @SuppressLint("ObsoleteSdkInt")
     private fun updateResources(){
         val prefs = getSharedPreferences("prefs", Context.MODE_PRIVATE)
@@ -206,7 +211,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == SEARCH_REQUEST_CODE && resultCode == RESULT_OK) {
@@ -221,10 +225,16 @@ class MainActivity : AppCompatActivity() {
                         super.onPageSelected(position)
                         when(position){
                             0 -> {
-                                sharedViewModel.setQuery(voiceList[0].toLowerCase(Locale.ROOT))
+                                voiceList[0].toLowerCase(Locale.ROOT).apply {
+                                    sharedViewModel.setQuery(this)
+                                    binding.searchView.queryHint = this
+                                }
                             }
                             1 -> {
-                                sharedViewModel.setQuery(voiceList[0].toLowerCase(Locale.ROOT))
+                                voiceList[0].toLowerCase(Locale.ROOT).apply {
+                                    sharedViewModel.setQuery(this)
+                                    binding.searchView.queryHint = this
+                                }
                             }
                         }
                     }
@@ -243,6 +253,39 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+    private fun countriesList() : List<String> {
+        arrayListOf<String>().apply {
+            add("ae")
+            add("ar")
+            add("at")
+            add("au")
+            add("be")
+            add("bg")
+            add("br")
+            add("ca")
+            add("ch")
+            add("cn")
+            add("co")
+            add("cu")
+            add("cz")
+            add("de")
+            add("en")
+            return this
+        }
+    }
+    private fun showFilterDialog() {
+        FilterDialog(this).apply {
+            searchBoxHint = "Search"
+            toolbarTitle  = "Countries"
+            setList(countriesList())
+
+            show("code","name",
+                DialogListener.Single { selectedItem ->
+                    sharedViewModel.setQuery(selectedItem.name)
+                    dispose()
+                })
+        }
     }
     companion object {
         const val  SEARCH_REQUEST_CODE = 1010

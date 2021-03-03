@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -43,9 +44,15 @@ class FavNewsActivity : AppCompatActivity() {
 
         mainViewModel?.deleteDuplicateEntries()
         mainViewModel!!.getLiveData().observe(this, Observer {
-            list = it
-            adapter = FavNewsAdapter(this, list!!)
-            binding.favRecycler.adapter = adapter
+            if(it.size == -1){
+                binding.noNews.visibility = View.VISIBLE
+            } else {
+                binding.noNews.visibility = View.INVISIBLE
+                list = it
+                adapter = FavNewsAdapter(this, list!!)
+                binding.favRecycler.adapter = adapter
+            }
+
         })
         binding.deleteAll.setOnClickListener {
             if(adapter!!.itemCount == 0) {

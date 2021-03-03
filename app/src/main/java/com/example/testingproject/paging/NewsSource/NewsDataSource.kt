@@ -28,9 +28,7 @@ class NewsDataSource(
         return try {
 
             val nextPageNumber = params.key ?: 1
-
             val response = apiResponse.getNews(query,apikey,nextPageNumber)
-
 
             LoadResult.Page(
                 data = response.articles!!,

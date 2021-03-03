@@ -17,12 +17,9 @@ class ViewPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapte
 
     @ExperimentalPagingApi
     override fun createFragment(position: Int): Fragment {
-        if(position == 0){
+        return if(position == 0)
             NewsFragment()
-        } else {
+        else
             HeadlinesFragment()
-        }
-        return NewsFragment()
     }
-
 }
