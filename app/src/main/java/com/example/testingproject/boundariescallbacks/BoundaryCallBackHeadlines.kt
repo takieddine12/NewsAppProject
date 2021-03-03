@@ -33,7 +33,7 @@ class BoundaryCallBackHeadlines(
                 remoteKeys.nextKey ?: return MediatorResult.Success(true)
             }
         }
-        val response = apiResponse.getHeadlines(country,apiKey = Utils.API_KEY,page = page).articles
+        val response = apiResponse.getHeadlines(country, Utils.API_KEY, page).articles
         val endOfPaginationReached = response!!.size < state.config.pageSize
         // TODO : Saving Response Into Database
         if(loadType == LoadType.REFRESH){

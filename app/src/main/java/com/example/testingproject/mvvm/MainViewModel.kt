@@ -22,6 +22,7 @@ import com.example.testingproject.webauth.ApiResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.launch
@@ -41,9 +42,11 @@ class MainViewModel @Inject constructor(
 
     fun getNews(query: String, apiKey: String) : Flow<PagingData<ArticleX>> {
         return Pager(config = getConfig(),
-                remoteMediator = BoundaryCallBackNews(apiResponse,query,this)){
+            remoteMediator = BoundaryCallBackNews(apiResponse,query,this))
+        {
             NewsDataSource(apiResponse,query,apiKey)
         }.flow
+            .catch {  }
             .retry { cause ->
                 if( cause is Exception || !Utils.checkConnectivity(context)){
                     return@retry true
@@ -58,6 +61,7 @@ class MainViewModel @Inject constructor(
                  remoteMediator = BoundaryCallBackHeadlines(country,this,apiResponse)){
              HeadlinesSourceFactory(apiResponse,country,apiKey)
          }.flow
+             .catch {  }
              .retry { cause ->
                  if( cause is Exception || !Utils.checkConnectivity(context)){
                      return@retry true

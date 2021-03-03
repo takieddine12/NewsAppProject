@@ -41,6 +41,7 @@ import com.example.testingproject.ui.SettingsActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -50,6 +51,7 @@ import java.util.*
 @AndroidEntryPoint
 @ExperimentalPagingApi
 class HeadlinesFragment : Fragment() {
+     private  var job  : Job? = null
      private  var selectedLanguage = "us"
      private lateinit var sharedViewModel: SharedViewModel
      private lateinit var headlinesAdapter: HeadLinesAdapter
@@ -83,7 +85,7 @@ class HeadlinesFragment : Fragment() {
         if(Utils.checkConnectivity(requireContext())){
             fetchData(selectedLanguage)
         } else {
-            lifecycleScope.launchWhenStarted {
+          lifecycleScope.launchWhenStarted {
                 mainViewModel.getOfflineHeadlines().collect {
                     headlinesAdapter.submitData(it)
                 }
@@ -103,7 +105,7 @@ class HeadlinesFragment : Fragment() {
     }
 
     private fun fetchData(selectedLanguage : String) {
-        lifecycleScope.launchWhenStarted {
+       job =   lifecycleScope.launchWhenStarted {
                mainViewModel.getHeadLines(selectedLanguage,Utils.API_KEY).collect {
                    headlinesAdapter.submitData(pagingData = it)
                    }
@@ -114,6 +116,11 @@ class HeadlinesFragment : Fragment() {
         } else {
             binding.noNews.visibility = View.INVISIBLE
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job?.cancel()
     }
 
 

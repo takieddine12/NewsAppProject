@@ -25,21 +25,21 @@ class NewsDataSource(
 ) : PagingSource<Int, ArticleX>()  {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ArticleX> {
-        return try {
-
+        try {
             val nextPageNumber = params.key ?: 1
             val response = apiResponse.getNews(query,apikey,nextPageNumber)
 
-            LoadResult.Page(
+           return LoadResult.Page(
                 data = response.articles!!,
                 prevKey = if(nextPageNumber == 1) null else nextPageNumber -1,
                 nextKey =  nextPageNumber + 1
             )
         }catch (ex : Exception){
             Timber.d("Paging Exception ${ex.message}")
-            LoadResult.Error(ex)
+            return LoadResult.Error(ex)
         }
     }
+
 
     override fun getRefreshKey(state: PagingState<Int, ArticleX>): Int? {
         return -1

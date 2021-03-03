@@ -24,6 +24,7 @@ import com.example.testingproject.ui.FavNewsActivity
 import com.example.testingproject.ui.NewsDetailsActivity
 import com.example.testingproject.ui.SettingsActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -34,6 +35,7 @@ import java.util.*
 @ExperimentalPagingApi
 class NewsFragment : Fragment() {
 
+    private  var job : Job? = null
     private lateinit var sharedViewModel: SharedViewModel
     private lateinit var newsAdapter: NewsAdapter
     private  val mainViewModel: MainViewModel by viewModels()
@@ -88,7 +90,7 @@ class NewsFragment : Fragment() {
         })
     }
     private fun fetchData(query: String) {
-        lifecycleScope.launch {
+       job =  lifecycleScope.launchWhenStarted {
               mainViewModel.getNews(query,Utils.API_KEY).collect {
                 newsAdapter.submitData(it)
             }
@@ -100,6 +102,11 @@ class NewsFragment : Fragment() {
         } else {
             binding.noNews.visibility = View.INVISIBLE
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job?.cancel()
     }
 
 }

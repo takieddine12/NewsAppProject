@@ -6,6 +6,7 @@ import com.example.testingproject.models.NewsItemRemoteKeys
 import com.example.testingproject.mvvm.MainViewModel
 import com.example.testingproject.newsmodels.ArticleX
 import com.example.testingproject.webauth.ApiResponse
+import timber.log.Timber
 
 @ExperimentalPagingApi
 class BoundaryCallBackNews(
@@ -15,10 +16,7 @@ class BoundaryCallBackNews(
     RemoteMediator<Int, ArticleX>() {
 
     private val initialPage: Int = 1
-    override suspend fun load(
-        loadType: LoadType,
-        state: PagingState<Int, ArticleX>
-    ): MediatorResult {
+    override suspend fun load(loadType: LoadType, state: PagingState<Int, ArticleX>): MediatorResult {
         val pageState = when (loadType) {
             LoadType.REFRESH -> {
                 val remoteKeys = getRemoteKeyClosestToCurrentPosition(state = state)
@@ -55,6 +53,7 @@ class BoundaryCallBackNews(
         mainViewModel.insertNewsRemoteKeys(keys)
         response.map {
             mainViewModel.insertAllNews(it)
+            Timber.d("This code block is called..")
         }
 
         return MediatorResult.Success(endOfPaginationReached)
@@ -72,12 +71,3 @@ class BoundaryCallBackNews(
     }
 }
 
-
-
-/*
-return state.anchorPosition?.let {
-        state.closestItemToPosition(anchorPosition = it)?.newsid?.let {
-            mainViewModel.getHeadlinesItemPerId(it)
-        }
-    }
- */
