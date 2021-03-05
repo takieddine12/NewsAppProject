@@ -2,6 +2,7 @@ package com.example.testingproject.ui
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentPagerAdapter
 import androidx.paging.ExperimentalPagingApi
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.testingproject.ui.fragments.NewsFragment
@@ -22,4 +23,5 @@ class ViewPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapte
         else
             HeadlinesFragment()
     }
+
 }

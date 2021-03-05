@@ -51,6 +51,7 @@ import java.util.*
 @AndroidEntryPoint
 @ExperimentalPagingApi
 class HeadlinesFragment : Fragment() {
+
      private  var job  : Job? = null
      private  var selectedLanguage = "us"
      private lateinit var sharedViewModel: SharedViewModel
@@ -98,10 +99,12 @@ class HeadlinesFragment : Fragment() {
             }
 
         }
+
         sharedViewModel.getQuery().observe(viewLifecycleOwner, Observer {
-             selectedLanguage = it
-             fetchData(selectedLanguage)
+            Timber.d("Query Value is $it")
+            fetchData(it)
         })
+
     }
 
     private fun fetchData(selectedLanguage : String) {
@@ -122,7 +125,6 @@ class HeadlinesFragment : Fragment() {
         super.onDestroy()
         job?.cancel()
     }
-
 
 }
 

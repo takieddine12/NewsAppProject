@@ -11,39 +11,33 @@ import android.speech.RecognizerIntent
 import android.util.DisplayMetrics
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.get
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.ViewModelProviders
-import androidx.lifecycle.lifecycleScope
 import androidx.paging.ExperimentalPagingApi
-import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.barisatalay.filterdialog.FilterDialog
 import com.barisatalay.filterdialog.model.DialogListener
 import com.example.testingproject.R
-import com.example.testingproject.Utils
 import com.example.testingproject.databinding.ActivityMainBinding
 import com.example.testingproject.extras.Common
 import com.example.testingproject.mvvm.SharedViewModel
+import com.example.testingproject.newsmodels.NewsModel
 import com.example.testingproject.ui.fragments.HeadlinesFragment
 import com.example.testingproject.ui.fragments.NewsFragment
+import com.example.testingproject.ui.fragments.NewsFragment_GeneratedInjector
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
+import kotlinx.android.synthetic.main.fav_row_layout.*
 import java.util.*
 
 
 @AndroidEntryPoint
 @ExperimentalPagingApi
 class MainActivity : AppCompatActivity() {
-    private var selectedPosition  = -1
+    private var selectedPosition  = 0
     private lateinit var sharedViewModel: SharedViewModel
     private var _binding : ActivityMainBinding? = null
     private val binding get() = _binding!!
@@ -71,6 +65,7 @@ class MainActivity : AppCompatActivity() {
             }
         }.attach()
 
+
         for (i in 0 until binding.tabLayout.tabCount) {
             val tab = (binding.tabLayout.getChildAt(0) as ViewGroup).getChildAt(i)
             val p = tab.layoutParams as ViewGroup.MarginLayoutParams
@@ -81,12 +76,12 @@ class MainActivity : AppCompatActivity() {
         // TODO : Query With SearchView
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
+                getCurrentVisibleFragment(query)
+                return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                getCurrentVisibleFragment(newText)
-                return true
+                return false
             }
         })
 
@@ -111,13 +106,17 @@ class MainActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.unique_menu, menu)
         val menuItem = menu?.findItem(R.id.language)
         menuItem?.isVisible = false
-        binding.mainViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+
+        binding.mainViewPager.registerOnPageChangeCallback(object :
+            ViewPager2.OnPageChangeCallback() {
+            override fun onPageScrolled(
+                position: Int, positionOffset: Float, positionOffsetPixels: Int) {
                 super.onPageScrolled(position, positionOffset, positionOffsetPixels)
             }
+
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                when(position){
+                when (position) {
                     0 -> {
                         menuItem?.isVisible = false
                         selectedPosition = position
@@ -128,6 +127,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+
             override fun onPageScrollStateChanged(state: Int) {
                 super.onPageScrollStateChanged(state)
             }
@@ -164,26 +164,11 @@ class MainActivity : AppCompatActivity() {
     }
     private fun getCurrentVisibleFragment(newText: String?){
 
-        binding.mainViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-                super.onPageScrolled(position, positionOffset, positionOffsetPixels)
-            }
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                when(position){
-                    0 -> {
-                        sharedViewModel.setQuery(newText?.toLowerCase()!!)
-                    }
-                    1 -> {
-                        sharedViewModel.setQuery(newText?.toLowerCase()!!)
-                    }
-                }
-            }
-            override fun onPageScrollStateChanged(state: Int) {
-                super.onPageScrollStateChanged(state)
-            }
-        })
-
+        if(selectedPosition == 0){
+             sendNews(newText!!)
+        } else {
+             sendNews(newText!!)
+        }
     }
     @SuppressLint("ObsoleteSdkInt")
     private fun updateResources(){
@@ -216,34 +201,11 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == SEARCH_REQUEST_CODE && resultCode == RESULT_OK) {
             val voiceList = data!!.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
             for (i in 0 until voiceList!!.size) {
-                binding.mainViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
-                    override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-                        super.onPageScrolled(position, positionOffset, positionOffsetPixels)
-                    }
+                if(selectedPosition == 0){
 
-                    override fun onPageSelected(position: Int) {
-                        super.onPageSelected(position)
-                        when(position){
-                            0 -> {
-                                voiceList[0].toLowerCase(Locale.ROOT).apply {
-                                    sharedViewModel.setQuery(this)
-                                    binding.searchView.queryHint = this
-                                }
-                            }
-                            1 -> {
-                                voiceList[0].toLowerCase(Locale.ROOT).apply {
-                                    sharedViewModel.setQuery(this)
-                                    binding.searchView.queryHint = this
-                                }
-                            }
-                        }
-                    }
-
-                    override fun onPageScrollStateChanged(state: Int) {
-                        super.onPageScrollStateChanged(state)
-                    }
-                })
-
+                } else {
+                    sendNews(voiceList[0].toLowerCase(Locale.ROOT))
+                }
             }
         }
     }
@@ -254,6 +216,10 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
         _binding = null
     }
+    private fun sendNews(query : String){
+        sharedViewModel.setQuery(query)
+    }
+
     private fun countriesList() : List<String> {
         arrayListOf<String>().apply {
             add("ae")
@@ -280,11 +246,13 @@ class MainActivity : AppCompatActivity() {
             toolbarTitle  = "Countries"
             setList(countriesList())
 
-            show("code","name",
-                DialogListener.Single { selectedItem ->
-                    sharedViewModel.setQuery(selectedItem.name)
-                    dispose()
-                })
+            if(selectedPosition == 1){
+                show("code", "name",
+                    DialogListener.Single { selectedItem ->
+                        sendNews(query = selectedItem.name)
+                        dispose()
+                    })
+            }
         }
     }
     companion object {
