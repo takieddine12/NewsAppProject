@@ -48,7 +48,6 @@ class MainActivity : AppCompatActivity() {
         updateResources()
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
-
         sharedViewModel = ViewModelProviders.of(this)[SharedViewModel::class.java]
 
         viewPagerAdapter = ViewPagerAdapter(this)
@@ -143,7 +142,6 @@ class MainActivity : AppCompatActivity() {
         })
         return true
     }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.refresh -> {
@@ -162,7 +160,6 @@ class MainActivity : AppCompatActivity() {
         }
         return true
     }
-
     private fun voiceSearch() {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
         intent.putExtra(
@@ -181,25 +178,9 @@ class MainActivity : AppCompatActivity() {
         val language = prefs.getString("language", "en")
         val languageCode = prefs.getString("languageCode", "en-US")
         val configuration = baseContext.resources.configuration
-
-        language?.let { lang ->
-            languageCode?.let { langCode ->
-                when {
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.N -> {
-                        configuration.setLocales(LocaleList(Locale(lang, langCode)))
-                        createConfigurationContext(configuration)
-                    }
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 -> {
-                        configuration.locale = Locale(lang, langCode)
-                        createConfigurationContext(configuration)
-                    }
-                    else -> {
-                        configuration.setLocale(Locale(lang, langCode))
-                        resources.updateConfiguration(configuration, DisplayMetrics())
-                    }
-                }
-            }
-        }
+        val local = Locale(language,languageCode)
+        configuration.setLocale(local)
+        resources.updateConfiguration(configuration,DisplayMetrics())
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -15,7 +15,7 @@ class NewsStateAdapter (
     private val retry : () -> Unit
 ): LoadStateAdapter<NewsStateAdapter.NewsViewHolder>(){
 
-    class NewsViewHolder(private var itemView : View) : RecyclerView.ViewHolder(itemView)
+    class NewsViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView)
 
     override fun onCreateViewHolder(parent: ViewGroup, loadState: LoadState): NewsViewHolder {
         val view  = LayoutInflater.from(parent.context)

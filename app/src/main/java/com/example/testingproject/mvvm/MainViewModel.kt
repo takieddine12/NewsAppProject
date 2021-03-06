@@ -42,15 +42,16 @@ class MainViewModel @Inject constructor(
             remoteMediator = BoundaryCallBackNews(apiResponse,query,this)) {
             NewsDataSource(apiResponse,query,apiKey)
             }.flow
-            .catch {
-            }
-            .retry { cause ->
-            if( cause is Exception || !Utils.checkConnectivity(context)){
-                return@retry true
-            }
-            return@retry  false
-        }
+             .catch {
+             }
+             .retry { cause ->
+                 if( cause is Exception || !Utils.checkConnectivity(context)){
+                     return@retry true
+                 }
+                 return@retry  false
+             }
              .cachedIn(viewModelScope)
+
 
     }
     fun getHeadLines(country: String, apiKey: String): Flow<PagingData<Article>> {
@@ -131,12 +132,11 @@ class MainViewModel @Inject constructor(
      fun getNewsItemPerId(key : Long) = newsRepository.getNewsPerId(key)
      fun getHeadlinesItemPerId(key : Long) = newsRepository.getHeadlinesItemPerId(key)
      private fun getConfig() : PagingConfig {
-        return PagingConfig(
-            pageSize = 10,
-            prefetchDistance = 2,
-            enablePlaceholders = true,
-            initialLoadSize = 5
-        )
+        return PagingConfig(pageSize = 10,
+            enablePlaceholders = false,
+            prefetchDistance = 3,
+            initialLoadSize = 5)
+
     }
 
     fun deleteDuplicateEntries() = viewModelScope.launch {

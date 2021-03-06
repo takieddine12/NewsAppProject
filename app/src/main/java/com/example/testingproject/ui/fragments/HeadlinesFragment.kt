@@ -68,19 +68,28 @@ class HeadlinesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
-        headlinesAdapter = HeadLinesAdapter(object : HeadlinesOnListener {
-            override fun headlinesOnClick(headlinesModel: Article) {
-                Intent(requireContext(), NewsDetailsActivity::class.java).apply {
-                    putExtra("author", headlinesModel.author)
-                    putExtra("title", headlinesModel.title)
-                    putExtra("description", headlinesModel.description)
-                    putExtra("imgUrl", headlinesModel.urlToImage)
-                    putExtra("date", headlinesModel.publishedAt)
-                    startActivity(this)
-                }
+        binding.headlinesRecycler.apply {
+            layoutManager = GridLayoutManager(requireContext(),2)
+            setHasFixedSize(true)
+            headlinesAdapter = HeadLinesAdapter(object : HeadlinesOnListener {
+                override fun headlinesOnClick(headlinesModel: Article) {
+                    Intent(requireContext(), NewsDetailsActivity::class.java).apply {
+                        putExtra("author", headlinesModel.author)
+                        putExtra("title", headlinesModel.title)
+                        putExtra("description", headlinesModel.description)
+                        putExtra("imgUrl", headlinesModel.urlToImage)
+                        putExtra("date", headlinesModel.publishedAt)
+                        startActivity(this)
+                    }
 
-            }
-        })
+                }
+            })
+            binding.headlinesRecycler.adapter = headlinesAdapter.withLoadStateFooter(
+                footer = NewsStateAdapter {headlinesAdapter.retry()})
+
+        }
+
+
         if(Utils.checkConnectivity(requireContext())){
             fetchData(selectedLanguage)
         } else {
@@ -97,18 +106,6 @@ class HeadlinesFragment : Fragment() {
             }
 
         }
-
-
-        binding.headlinesRecycler.apply {
-            layoutManager = GridLayoutManager(requireContext(),2)
-            setHasFixedSize(true)
-
-            binding.headlinesRecycler.adapter = headlinesAdapter.withLoadStateFooter(
-                footer = NewsStateAdapter {headlinesAdapter.retry()}
-            )
-
-        }
-
 
 
         // TODO : Get Bundle Data
@@ -128,12 +125,12 @@ class HeadlinesFragment : Fragment() {
             }
         }
 
-//        binding.headlinesRecycler.adapter = headlinesAdapter
-//        if(headlinesAdapter.itemCount == 0){
-//            binding.noNews.visibility = View.VISIBLE
-//        } else {
-//            binding.noNews.visibility = View.INVISIBLE
-//        }
+        binding.headlinesRecycler.adapter = headlinesAdapter
+        if(headlinesAdapter.itemCount == 0){
+            binding.noNews.visibility = View.VISIBLE
+        } else {
+            binding.noNews.visibility = View.INVISIBLE
+        }
     }
 
 }

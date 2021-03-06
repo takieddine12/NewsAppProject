@@ -28,9 +28,7 @@ class SettingsActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction().replace(R.id.framelayout, PreferenceSettings())
             .commit()
 
-
     }
-
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
@@ -59,8 +57,7 @@ class SettingsActivity : AppCompatActivity() {
 
                 frenchCheckBox.onPreferenceChangeListener =
                     Preference.OnPreferenceChangeListener { preference, newValue ->
-                        val isFrenchChecked = newValue as Boolean
-                        if (isFrenchChecked) {
+                        if (newValue as Boolean) {
                             spanishCheckBox.isChecked = false
                             englishCheckBox.isChecked = false
                             editor.apply {
@@ -76,8 +73,7 @@ class SettingsActivity : AppCompatActivity() {
                     }
                 spanishCheckBox.onPreferenceChangeListener =
                     Preference.OnPreferenceChangeListener { preference, newValue ->
-                        val isSpanishChecked = newValue as Boolean
-                        if (isSpanishChecked) {
+                        if (newValue as Boolean) {
                             frenchCheckBox.isChecked = false
                             englishCheckBox.isChecked = false
                             editor.apply {
@@ -92,10 +88,9 @@ class SettingsActivity : AppCompatActivity() {
                         }
                         true
                     }
-
-                englishCheckBox.onPreferenceChangeListener = Preference.OnPreferenceChangeListener { preference, newValue ->
-                        val isEnglishChecked = newValue as Boolean
-                        if (isEnglishChecked) {
+                englishCheckBox.onPreferenceChangeListener =
+                    Preference.OnPreferenceChangeListener { preference, newValue ->
+                        if (newValue as Boolean) {
                             frenchCheckBox.isChecked = false
                             spanishCheckBox.isChecked = false
                             editor.apply {

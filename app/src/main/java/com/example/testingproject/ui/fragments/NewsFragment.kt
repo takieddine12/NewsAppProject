@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.testingproject.BottomDialog
 import com.example.testingproject.Utils
 import com.example.testingproject.databinding.AllnewsLayoutBinding
@@ -26,6 +27,7 @@ import com.example.testingproject.ui.FavNewsActivity
 import com.example.testingproject.ui.NewsDetailsActivity
 import com.example.testingproject.ui.SettingsActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.topheadlines_layout.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
@@ -49,33 +51,26 @@ class NewsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
-        newsAdapter = NewsAdapter(object : NewsOnListener {
-            override fun onNewsClicked(allNewsModel: ArticleX) {
-                Intent(requireContext(), NewsDetailsActivity::class.java).apply {
-                    putExtra("author", allNewsModel.author)
-                    putExtra("title", allNewsModel.title)
-                    putExtra("description", allNewsModel?.description)
-                    putExtra("imgUrl", allNewsModel.urlToImage)
-                    putExtra("date", allNewsModel.publishedAt)
-                    startActivity(this)
-                }
-            }
-        })
-
         binding.newsRecycler.apply {
             layoutManager = GridLayoutManager(requireContext(), 2)
             setHasFixedSize(true)
+
+            newsAdapter = NewsAdapter(object : NewsOnListener {
+                override fun onNewsClicked(allNewsModel: ArticleX) {
+                    Intent(requireContext(), NewsDetailsActivity::class.java).apply {
+                        putExtra("author", allNewsModel.author)
+                        putExtra("title", allNewsModel.title)
+                        putExtra("description", allNewsModel?.description)
+                        putExtra("imgUrl", allNewsModel.urlToImage)
+                        putExtra("date", allNewsModel.publishedAt)
+                        startActivity(this)
+                    }
+                }
+            })
             binding.newsRecycler.adapter = newsAdapter.withLoadStateFooter(
                 footer = NewsStateAdapter { newsAdapter.retry() })
+
         }
-
-        lifecycleScope.launch {
-            mainViewModel.getNews("algeria",Utils.API_KEY).collectLatest {
-                newsAdapter.submitData(it)
-            }
-        }
-
-
 
         if(Utils.checkConnectivity(requireContext())) {
             fetchData("algeria".toLowerCase(Locale.ROOT))
@@ -95,6 +90,7 @@ class NewsFragment : Fragment() {
             }
         }
 
+        binding.newsRecycler.adapter = newsAdapter
 
         // TODO : Get Bundle Data
         val arguments = arguments
@@ -107,8 +103,12 @@ class NewsFragment : Fragment() {
     }
     private fun fetchData(query: String) {
 
+        lifecycleScope.launch {
+            mainViewModel.getNews(query,Utils.API_KEY).collectLatest {
+                newsAdapter.submitData(it)
+            }
+        }
 
-        binding.newsRecycler.adapter = newsAdapter
         if(newsAdapter.itemCount == -1){
             binding.noNews.visibility = View.VISIBLE
         } else {

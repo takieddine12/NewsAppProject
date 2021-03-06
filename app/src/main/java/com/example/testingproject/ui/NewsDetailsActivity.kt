@@ -5,14 +5,14 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.paging.ExperimentalPagingApi
-import com.example.testingproject.showToast
 import com.example.testingproject.Utils
 import com.example.testingproject.mvvm.MainViewModel
 import com.example.testingproject.databinding.ActivityNewsDetailsBinding
 import com.example.testingproject.models.FavNewsModel
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_news__details_.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 @AndroidEntryPoint
 @ExperimentalPagingApi
@@ -35,14 +35,14 @@ class NewsDetailsActivity : AppCompatActivity() {
                     setAuthor.text = StringBuilder().append("Author").append(" ").append(it.getStringExtra("author")).toString()
                     favdescription.text = it.getStringExtra("description")
                     favtitle.text = it.getStringExtra("title")
-                    textDate.text = it.getStringExtra("date")
+                    textDate.text = formatDate(it.getStringExtra("date")!!)
                     Picasso.get().load(it.getStringExtra("imgUrl")).fit().into(favImage)
 
                     val favNewsModel = FavNewsModel(
                         author = it.getStringExtra("author"),
                         title = it.getStringExtra("title"),
                         urlToImage = it.getStringExtra("imgUrl"),
-                        publishedAt = it.getStringExtra("date"),
+                        publishedAt = formatDate(it.getStringExtra("date")!!),
                         description = it.getStringExtra("description"),
                         isSaved = false
                     )
@@ -88,6 +88,13 @@ class NewsDetailsActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun formatDate(date : String) : String {
+        val simpleDateFormat = SimpleDateFormat("yyyy-mm-dd", Locale.getDefault())
+        val simpleDate = simpleDateFormat.parse(date)
+
+        return simpleDateFormat.format(simpleDate)
     }
 }
 
