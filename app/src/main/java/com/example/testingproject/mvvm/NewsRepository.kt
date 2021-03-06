@@ -28,7 +28,6 @@ class  NewsRepository @Inject constructor(
 
 
      // TODO :  FavNewsDao Section
-
     suspend fun insertFavNews(favNewsModel: FavNewsModel) = dao.insertFavNews(favNewsModel)
     suspend fun deleteFavPerNews(favNewsModel: FavNewsModel) = dao.deletePerFavNews(favNewsModel)
     suspend fun deleteAllFavNews() = dao.deleteAllFavNews()
@@ -38,9 +37,7 @@ class  NewsRepository @Inject constructor(
 
     // TODO : Headlines Dao Section
      fun getAllHeadlines() = headlinesDao.getAllHeadlines()
-     suspend fun insertHeadlines(list : Article){
-        headlinesDao.insertHeadlines(list)
-    }
+     suspend fun insertHeadlines(list : Article){ headlinesDao.insertHeadlines(list) }
     fun deleteAllHeadlines() = headlinesDao.deleteAllHeadlines()
 
     // TODO : News Dao Section
@@ -49,11 +46,11 @@ class  NewsRepository @Inject constructor(
      suspend fun insertAllNews(list : ArticleX)   = newsDao.persistNews(list)
 
 
-    // Suggestions Dao
+    // TODO : Suggestions Dao
     suspend fun insertSuggestions(suggestionsModel: SuggestionsModel) = suggestionsDao.insertSuggestion(suggestionsModel)
     fun getAllSuggestions() = suggestionsDao.getAllSuggestions()
 
-    // TODO : Remote Keys Dao Section
+    // TODO : Remote Keys  Headlines
     suspend fun insertHeadlinesRemoteKey(list : List<NewsItemRemoteKeys>){
         headlinesRemoteKeyDao.insertRemoteKey(list)
     }
@@ -64,6 +61,9 @@ class  NewsRepository @Inject constructor(
      fun clearHeadlinesKeys(){
         headlinesRemoteKeyDao.clearHeadlinesRemoteKey()
     }
+
+
+    // TODO : Remote Keys News
      fun getNewsPerId(key : Long) : NewsItemRemoteKeys{
       return newsRemoteKeyDao.getItemPerId(key)
     }

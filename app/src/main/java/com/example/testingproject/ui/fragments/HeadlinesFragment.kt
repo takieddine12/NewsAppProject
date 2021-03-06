@@ -37,6 +37,7 @@ import com.example.testingproject.ui.NewsDetailsActivity
 import com.example.testingproject.newslistener.HeadlinesOnListener
 import com.example.testingproject.newsmodels.Article
 import com.example.testingproject.newsmodels.HeadlinesModel
+import com.example.testingproject.recyclers.states.NewsStateAdapter
 import com.example.testingproject.ui.SettingsActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -52,9 +53,8 @@ import java.util.*
 @ExperimentalPagingApi
 class HeadlinesFragment : Fragment() {
 
-     private  var job  : Job? = null
+     private var query = ""
      private  var selectedLanguage = "us"
-     private lateinit var sharedViewModel: SharedViewModel
      private lateinit var headlinesAdapter: HeadLinesAdapter
      private val mainViewModel: MainViewModel by viewModels()
      lateinit var binding : TopheadlinesLayoutBinding
@@ -66,27 +66,25 @@ class HeadlinesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.headlinesRecycler.layoutManager = GridLayoutManager(requireContext(),2)
-        binding.headlinesRecycler.setHasFixedSize(true)
 
-        sharedViewModel = ViewModelProviders.of(this)[SharedViewModel::class.java]
+
         headlinesAdapter = HeadLinesAdapter(object : HeadlinesOnListener {
-                override fun headlinesOnClick(headlinesModel: Article) {
-                        Intent(requireContext(), NewsDetailsActivity::class.java).apply {
-                            putExtra("author", headlinesModel.author)
-                            putExtra("title", headlinesModel.title)
-                            putExtra("description", headlinesModel.description)
-                            putExtra("imgUrl", headlinesModel.urlToImage)
-                            putExtra("date", headlinesModel.publishedAt)
-                            startActivity(this)
-                    }
-
+            override fun headlinesOnClick(headlinesModel: Article) {
+                Intent(requireContext(), NewsDetailsActivity::class.java).apply {
+                    putExtra("author", headlinesModel.author)
+                    putExtra("title", headlinesModel.title)
+                    putExtra("description", headlinesModel.description)
+                    putExtra("imgUrl", headlinesModel.urlToImage)
+                    putExtra("date", headlinesModel.publishedAt)
+                    startActivity(this)
                 }
-            })
+
+            }
+        })
         if(Utils.checkConnectivity(requireContext())){
             fetchData(selectedLanguage)
         } else {
-          lifecycleScope.launchWhenStarted {
+            lifecycleScope.launchWhenStarted {
                 mainViewModel.getOfflineHeadlines().collect {
                     headlinesAdapter.submitData(it)
                 }
@@ -100,30 +98,42 @@ class HeadlinesFragment : Fragment() {
 
         }
 
-        sharedViewModel.getQuery().observe(viewLifecycleOwner, Observer {
-            Timber.d("Query Value is $it")
-            fetchData(it)
-        })
 
-    }
+        binding.headlinesRecycler.apply {
+            layoutManager = GridLayoutManager(requireContext(),2)
+            setHasFixedSize(true)
 
-    private fun fetchData(selectedLanguage : String) {
-       job =   lifecycleScope.launchWhenStarted {
-               mainViewModel.getHeadLines(selectedLanguage,Utils.API_KEY).collect {
-                   headlinesAdapter.submitData(pagingData = it)
-                   }
-           }
-        binding.headlinesRecycler.adapter = headlinesAdapter
-        if(headlinesAdapter.itemCount == 0){
-            binding.noNews.visibility = View.VISIBLE
-        } else {
-            binding.noNews.visibility = View.INVISIBLE
+            binding.headlinesRecycler.adapter = headlinesAdapter.withLoadStateFooter(
+                footer = NewsStateAdapter {headlinesAdapter.retry()}
+            )
+
+        }
+
+
+
+        // TODO : Get Bundle Data
+        val arguments = arguments
+        arguments?.let {
+            val receivedQuery = it.getString("query")
+            fetchData(receivedQuery!!)
+            Timber.d("Received Query Headlines $receivedQuery")
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        job?.cancel()
+    private fun fetchData(selectedLanguage : String) {
+
+        lifecycleScope.launch {
+            mainViewModel.getHeadLines(selectedLanguage,Utils.API_KEY).collect {
+                headlinesAdapter.submitData(pagingData = it)
+            }
+        }
+
+//        binding.headlinesRecycler.adapter = headlinesAdapter
+//        if(headlinesAdapter.itemCount == 0){
+//            binding.noNews.visibility = View.VISIBLE
+//        } else {
+//            binding.noNews.visibility = View.INVISIBLE
+//        }
     }
 
 }

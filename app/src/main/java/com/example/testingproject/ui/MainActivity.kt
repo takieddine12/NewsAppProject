@@ -37,9 +37,9 @@ import java.util.*
 @AndroidEntryPoint
 @ExperimentalPagingApi
 class MainActivity : AppCompatActivity() {
-    private var selectedPosition  = 0
+    private var selectedPosition = 0
     private lateinit var sharedViewModel: SharedViewModel
-    private var _binding : ActivityMainBinding? = null
+    private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
     private var viewPagerAdapter: ViewPagerAdapter? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,13 +55,13 @@ class MainActivity : AppCompatActivity() {
         binding.mainViewPager.adapter = viewPagerAdapter
         binding.mainViewPager.offscreenPageLimit = 2
         TabLayoutMediator(binding.tabLayout, binding.mainViewPager) { tab, position ->
-            when(position) {
+            when (position) {
                 0 -> {
                     tab.text = getString(R.string.allnews)
                 }
-                    else -> {
-                        tab.text = getString(R.string.topheadlines)
-                    }
+                else -> {
+                    tab.text = getString(R.string.topheadlines)
+                }
             }
         }.attach()
 
@@ -76,7 +76,12 @@ class MainActivity : AppCompatActivity() {
         // TODO : Query With SearchView
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                getCurrentVisibleFragment(query)
+
+                if (selectedPosition == 0) {
+                    sendNewsFragmentQuery(query!!)
+                } else {
+                    sendHeadlinesFragmentQuery(query!!)
+                }
                 return true
             }
 
@@ -86,7 +91,7 @@ class MainActivity : AppCompatActivity() {
         })
 
         binding.nav.setOnNavigationItemSelectedListener {
-            when(it.itemId) {
+            when (it.itemId) {
                 R.id.settings -> {
                     Intent(this@MainActivity, SettingsActivity::class.java).apply {
                         startActivity(this)
@@ -100,7 +105,10 @@ class MainActivity : AppCompatActivity() {
             }
             true
         }
+
     }
+
+
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.unique_menu, menu)
@@ -110,7 +118,8 @@ class MainActivity : AppCompatActivity() {
         binding.mainViewPager.registerOnPageChangeCallback(object :
             ViewPager2.OnPageChangeCallback() {
             override fun onPageScrolled(
-                position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+                position: Int, positionOffset: Float, positionOffsetPixels: Int
+            ) {
                 super.onPageScrolled(position, positionOffset, positionOffsetPixels)
             }
 
@@ -134,23 +143,26 @@ class MainActivity : AppCompatActivity() {
         })
         return true
     }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-       when(item.itemId){
-           R.id.refresh -> {
-               Intent(this, MainActivity::class.java).apply {
-                   flags = Intent.FLAG_ACTIVITY_NO_ANIMATION
-                   startActivity(this)
-               }
-           }
-           R.id.voice -> {
-               voiceSearch()
-           }
-           R.id.language -> {
-               showFilterDialog()
-           }
-       }
+        when (item.itemId) {
+            R.id.refresh -> {
+                Intent(this, MainActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NO_ANIMATION
+                    startActivity(this)
+                }
+
+            }
+            R.id.voice -> {
+                voiceSearch()
+            }
+            R.id.language -> {
+                showFilterDialog()
+            }
+        }
         return true
     }
+
     private fun voiceSearch() {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
         intent.putExtra(
@@ -162,16 +174,9 @@ class MainActivity : AppCompatActivity() {
         startActivityForResult(intent, SEARCH_REQUEST_CODE)
 
     }
-    private fun getCurrentVisibleFragment(newText: String?){
 
-        if(selectedPosition == 0){
-             sendNews(newText!!)
-        } else {
-             sendNews(newText!!)
-        }
-    }
     @SuppressLint("ObsoleteSdkInt")
-    private fun updateResources(){
+    private fun updateResources() {
         val prefs = getSharedPreferences("prefs", Context.MODE_PRIVATE)
         val language = prefs.getString("language", "en")
         val languageCode = prefs.getString("languageCode", "en-US")
@@ -179,48 +184,69 @@ class MainActivity : AppCompatActivity() {
 
         language?.let { lang ->
             languageCode?.let { langCode ->
-              when {
-                    Build.VERSION.SDK_INT  >= Build.VERSION_CODES.N -> {
+                when {
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.N -> {
                         configuration.setLocales(LocaleList(Locale(lang, langCode)))
                         createConfigurationContext(configuration)
                     }
                     Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 -> {
-                    configuration.locale  = Locale(lang, langCode)
-                    createConfigurationContext(configuration)
-                     }
+                        configuration.locale = Locale(lang, langCode)
+                        createConfigurationContext(configuration)
+                    }
                     else -> {
-                    configuration.setLocale(Locale(lang, langCode))
-                    resources.updateConfiguration(configuration, DisplayMetrics())
-                     }
+                        configuration.setLocale(Locale(lang, langCode))
+                        resources.updateConfiguration(configuration, DisplayMetrics())
+                    }
                 }
             }
         }
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == SEARCH_REQUEST_CODE && resultCode == RESULT_OK) {
             val voiceList = data!!.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
             for (i in 0 until voiceList!!.size) {
-                if(selectedPosition == 0){
-
+                if (selectedPosition == 0) {
+                    sendNewsFragmentQuery(voiceList[0].toLowerCase(Locale.ROOT))
                 } else {
-                    sendNews(voiceList[0].toLowerCase(Locale.ROOT))
+                    sendHeadlinesFragmentQuery(voiceList[0].toLowerCase(Locale.ROOT))
                 }
             }
         }
     }
+
     override fun onBackPressed() {
         moveTaskToBack(true)
     }
+
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
     }
-    private fun sendNews(query : String){
-        sharedViewModel.setQuery(query)
+
+    fun sendHeadlinesFragmentQuery(query: String){
+        val bundle = Bundle()
+        bundle.putString("query",query)
+        val headlinesFragment = HeadlinesFragment()
+        headlinesFragment.arguments = bundle
     }
 
-    private fun countriesList() : List<String> {
+    fun sendNewsFragmentQuery(query : String){
+        val bundle = Bundle()
+        bundle.putString("query",query)
+        val newsFragment = NewsFragment()
+        newsFragment.arguments = bundle
+    }
+
+    fun sendLanguageQuery(query : String){
+        val bundle = Bundle()
+        bundle.putString("language",query)
+        val newsFragment = NewsFragment()
+        newsFragment.arguments = bundle
+    }
+
+    private fun countriesList(): List<String> {
         arrayListOf<String>().apply {
             add("ae")
             add("ar")
@@ -240,22 +266,24 @@ class MainActivity : AppCompatActivity() {
             return this
         }
     }
+
     private fun showFilterDialog() {
         FilterDialog(this).apply {
             searchBoxHint = "Search"
-            toolbarTitle  = "Countries"
+            toolbarTitle = "Countries"
             setList(countriesList())
 
-            if(selectedPosition == 1){
+            if (selectedPosition == 1) {
                 show("code", "name",
                     DialogListener.Single { selectedItem ->
-                        sendNews(query = selectedItem.name)
+                        sendLanguageQuery(query = selectedItem.name)
                         dispose()
                     })
             }
         }
     }
+
     companion object {
-        const val  SEARCH_REQUEST_CODE = 1010
+        const val SEARCH_REQUEST_CODE = 1010
     }
 }

@@ -11,6 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.ExperimentalPagingApi
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.testingproject.BottomDialog
 import com.example.testingproject.Utils
@@ -20,12 +21,14 @@ import com.example.testingproject.mvvm.SharedViewModel
 import com.example.testingproject.newslistener.NewsOnListener
 import com.example.testingproject.newsmodels.ArticleX
 import com.example.testingproject.recyclers.NewsAdapter
+import com.example.testingproject.recyclers.states.NewsStateAdapter
 import com.example.testingproject.ui.FavNewsActivity
 import com.example.testingproject.ui.NewsDetailsActivity
 import com.example.testingproject.ui.SettingsActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
@@ -34,9 +37,6 @@ import java.util.*
 @AndroidEntryPoint
 @ExperimentalPagingApi
 class NewsFragment : Fragment() {
-
-    private  var job : Job? = null
-    private lateinit var sharedViewModel: SharedViewModel
     private lateinit var newsAdapter: NewsAdapter
     private  val mainViewModel: MainViewModel by viewModels()
     private lateinit var binding : AllnewsLayoutBinding
@@ -48,10 +48,6 @@ class NewsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.newsRecycler.layoutManager = GridLayoutManager(requireContext(), 2)
-        binding.newsRecycler.setHasFixedSize(true)
-
-        sharedViewModel = ViewModelProviders.of(this)[SharedViewModel::class.java]
 
         newsAdapter = NewsAdapter(object : NewsOnListener {
             override fun onNewsClicked(allNewsModel: ArticleX) {
@@ -66,8 +62,23 @@ class NewsFragment : Fragment() {
             }
         })
 
+        binding.newsRecycler.apply {
+            layoutManager = GridLayoutManager(requireContext(), 2)
+            setHasFixedSize(true)
+            binding.newsRecycler.adapter = newsAdapter.withLoadStateFooter(
+                footer = NewsStateAdapter { newsAdapter.retry() })
+        }
+
+        lifecycleScope.launch {
+            mainViewModel.getNews("algeria",Utils.API_KEY).collectLatest {
+                newsAdapter.submitData(it)
+            }
+        }
+
+
+
         if(Utils.checkConnectivity(requireContext())) {
-            fetchData("corona".toLowerCase(Locale.ROOT))
+            fetchData("algeria".toLowerCase(Locale.ROOT))
         } else {
             lifecycleScope.launchWhenStarted {
                 mainViewModel.getOfflineNews().collect {
@@ -85,16 +96,17 @@ class NewsFragment : Fragment() {
         }
 
 
-        sharedViewModel.getQuery().observe(viewLifecycleOwner, Observer {
-            fetchData(it.toLowerCase(Locale.ROOT))
-        })
+        // TODO : Get Bundle Data
+        val arguments = arguments
+        arguments?.let {
+            val receivedQuery = it.getString("query")
+            fetchData(receivedQuery!!)
+            Timber.d("Received Query News $receivedQuery")
+        }
+
     }
     private fun fetchData(query: String) {
-       job =  lifecycleScope.launchWhenStarted {
-              mainViewModel.getNews(query,Utils.API_KEY).collect {
-                newsAdapter.submitData(it)
-            }
-        }
+
 
         binding.newsRecycler.adapter = newsAdapter
         if(newsAdapter.itemCount == -1){
@@ -102,12 +114,10 @@ class NewsFragment : Fragment() {
         } else {
             binding.noNews.visibility = View.INVISIBLE
         }
+
+
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        job?.cancel()
-    }
 
 }
 
