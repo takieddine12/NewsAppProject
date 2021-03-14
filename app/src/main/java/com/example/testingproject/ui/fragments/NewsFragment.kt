@@ -7,31 +7,25 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.ExperimentalPagingApi
-import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.testingproject.BottomDialog
 import com.example.testingproject.Utils
 import com.example.testingproject.databinding.AllnewsLayoutBinding
+import com.example.testingproject.models.EventBusModel
 import com.example.testingproject.mvvm.MainViewModel
-import com.example.testingproject.mvvm.SharedViewModel
 import com.example.testingproject.newslistener.NewsOnListener
 import com.example.testingproject.newsmodels.ArticleX
 import com.example.testingproject.recyclers.NewsAdapter
 import com.example.testingproject.recyclers.states.NewsStateAdapter
-import com.example.testingproject.ui.FavNewsActivity
 import com.example.testingproject.ui.NewsDetailsActivity
-import com.example.testingproject.ui.SettingsActivity
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.topheadlines_layout.*
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import timber.log.Timber
 import java.util.*
 
@@ -43,8 +37,13 @@ class NewsFragment : Fragment() {
     private  val mainViewModel: MainViewModel by viewModels()
     private lateinit var binding : AllnewsLayoutBinding
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         binding = AllnewsLayoutBinding.inflate(inflater, container, false)
+
         return binding.root
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -92,19 +91,13 @@ class NewsFragment : Fragment() {
 
         binding.newsRecycler.adapter = newsAdapter
 
-        // TODO : Get Bundle Data
-        val arguments = arguments
-        arguments?.let {
-            val receivedQuery = it.getString("query")
-            fetchData(receivedQuery!!)
-            Timber.d("Received Query News $receivedQuery")
-        }
+
 
     }
     private fun fetchData(query: String) {
 
         lifecycleScope.launch {
-            mainViewModel.getNews(query,Utils.API_KEY).collectLatest {
+            mainViewModel.getNews(query, Utils.API_KEY).collectLatest {
                 newsAdapter.submitData(it)
             }
         }
@@ -118,7 +111,30 @@ class NewsFragment : Fragment() {
 
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+     fun onMessageEventMain(messageEvent: EventBusModel){
+        if(messageEvent.query.isNotEmpty()){
+            fetchData(messageEvent.query)
+        }
+        // we receive data here
+    }
 
+
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        EventBus.getDefault().unregister(this)
+    }
 }
 
 

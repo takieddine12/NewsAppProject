@@ -51,6 +51,8 @@ dependencies {
 
     def paging_version = "3.0.0-beta01"
 
+    //EventBus Library
+    implementation 'org.greenrobot:eventbus:3.2.0'
 
     //Bottom Bar Library
     implementation 'it.sephiroth.android.library.bottomnavigation:bottom-navigation:3.0.0'

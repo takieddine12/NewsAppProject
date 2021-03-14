@@ -5,16 +5,16 @@
     <item android:title=""
         android:id="@+id/refresh"
         android:icon="@drawable/ic_baseline_refresh_24"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always"/>
 
     <item android:title=""
         android:id="@+id/voice"
         android:icon="@drawable/ic_keyboard_voice_black_24dp"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always"/>
 
     <item android:id="@+id/language"
         android:icon="@drawable/ic_language_black_24dp"
-        app:showAsAction="ifRoom"
+        app:showAsAction="always"
         android:title=""
         />
 </menu>

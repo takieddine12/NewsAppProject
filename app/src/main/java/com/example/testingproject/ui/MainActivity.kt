@@ -4,9 +4,7 @@ package com.example.testingproject.ui
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
-import android.os.LocaleList
 import android.speech.RecognizerIntent
 import android.util.DisplayMetrics
 import android.view.Menu
@@ -14,7 +12,6 @@ import android.view.MenuItem
 import android.view.ViewGroup
 import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.paging.ExperimentalPagingApi
 import androidx.viewpager2.widget.ViewPager2
@@ -23,14 +20,11 @@ import com.barisatalay.filterdialog.model.DialogListener
 import com.example.testingproject.R
 import com.example.testingproject.databinding.ActivityMainBinding
 import com.example.testingproject.extras.Common
+import com.example.testingproject.models.EventBusModel
 import com.example.testingproject.mvvm.SharedViewModel
-import com.example.testingproject.newsmodels.NewsModel
-import com.example.testingproject.ui.fragments.HeadlinesFragment
-import com.example.testingproject.ui.fragments.NewsFragment
-import com.example.testingproject.ui.fragments.NewsFragment_GeneratedInjector
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.fav_row_layout.*
+import org.greenrobot.eventbus.EventBus
 import java.util.*
 
 
@@ -77,9 +71,9 @@ class MainActivity : AppCompatActivity() {
             override fun onQueryTextSubmit(query: String?): Boolean {
 
                 if (selectedPosition == 0) {
-                    sendNewsFragmentQuery(query!!)
+                   EventBus.getDefault().postSticky(EventBusModel(query!!))
                 } else {
-                    sendHeadlinesFragmentQuery(query!!)
+                   EventBus.getDefault().postSticky(EventBusModel(query!!))
                 }
                 return true
             }
@@ -107,8 +101,6 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.unique_menu, menu)
         val menuItem = menu?.findItem(R.id.language)
@@ -116,9 +108,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.mainViewPager.registerOnPageChangeCallback(object :
             ViewPager2.OnPageChangeCallback() {
-            override fun onPageScrolled(
-                position: Int, positionOffset: Float, positionOffsetPixels: Int
-            ) {
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
                 super.onPageScrolled(position, positionOffset, positionOffsetPixels)
             }
 
@@ -149,7 +139,6 @@ class MainActivity : AppCompatActivity() {
                     flags = Intent.FLAG_ACTIVITY_NO_ANIMATION
                     startActivity(this)
                 }
-
             }
             R.id.voice -> {
                 voiceSearch()
@@ -160,7 +149,7 @@ class MainActivity : AppCompatActivity() {
         }
         return true
     }
-    private fun voiceSearch() {
+     fun voiceSearch() {
         val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
         intent.putExtra(
             RecognizerIntent.EXTRA_LANGUAGE_MODEL,
@@ -172,8 +161,8 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    @SuppressLint("ObsoleteSdkInt")
-    private fun updateResources() {
+     @SuppressLint("ObsoleteSdkInt")
+     fun updateResources() {
         val prefs = getSharedPreferences("prefs", Context.MODE_PRIVATE)
         val language = prefs.getString("language", "en")
         val languageCode = prefs.getString("languageCode", "en-US")
@@ -182,52 +171,27 @@ class MainActivity : AppCompatActivity() {
         configuration.setLocale(local)
         resources.updateConfiguration(configuration,DisplayMetrics())
     }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == SEARCH_REQUEST_CODE && resultCode == RESULT_OK) {
             val voiceList = data!!.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
             for (i in 0 until voiceList!!.size) {
                 if (selectedPosition == 0) {
-                    sendNewsFragmentQuery(voiceList[0].toLowerCase(Locale.ROOT))
+                   EventBus.getDefault().postSticky(EventBusModel(voiceList[0].toLowerCase(Locale.ROOT)))
                 } else {
-                    sendHeadlinesFragmentQuery(voiceList[0].toLowerCase(Locale.ROOT))
+                   EventBus.getDefault().postSticky(EventBusModel(voiceList[0].toLowerCase(Locale.ROOT)))
                 }
             }
         }
     }
-
-    override fun onBackPressed() {
+     override fun onBackPressed() {
         moveTaskToBack(true)
     }
-
-    override fun onDestroy() {
+     override fun onDestroy() {
         super.onDestroy()
         _binding = null
     }
-
-    fun sendHeadlinesFragmentQuery(query: String){
-        val bundle = Bundle()
-        bundle.putString("query",query)
-        val headlinesFragment = HeadlinesFragment()
-        headlinesFragment.arguments = bundle
-    }
-
-    fun sendNewsFragmentQuery(query : String){
-        val bundle = Bundle()
-        bundle.putString("query",query)
-        val newsFragment = NewsFragment()
-        newsFragment.arguments = bundle
-    }
-
-    fun sendLanguageQuery(query : String){
-        val bundle = Bundle()
-        bundle.putString("language",query)
-        val newsFragment = NewsFragment()
-        newsFragment.arguments = bundle
-    }
-
-    private fun countriesList(): List<String> {
+     fun countriesList(): List<String> {
         arrayListOf<String>().apply {
             add("ae")
             add("ar")
@@ -247,8 +211,7 @@ class MainActivity : AppCompatActivity() {
             return this
         }
     }
-
-    private fun showFilterDialog() {
+     fun showFilterDialog() {
         FilterDialog(this).apply {
             searchBoxHint = "Search"
             toolbarTitle = "Countries"
@@ -257,14 +220,13 @@ class MainActivity : AppCompatActivity() {
             if (selectedPosition == 1) {
                 show("code", "name",
                     DialogListener.Single { selectedItem ->
-                        sendLanguageQuery(query = selectedItem.name)
+                        EventBus.getDefault().postSticky(EventBusModel(selectedItem.name))
                         dispose()
                     })
             }
         }
     }
-
-    companion object {
+     companion object {
         const val SEARCH_REQUEST_CODE = 1010
     }
 }

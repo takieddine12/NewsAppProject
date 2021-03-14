@@ -1,60 +1,39 @@
 package com.example.testingproject.ui.fragments
 
-import android.app.Activity
-import android.app.SearchManager
 import android.content.Intent
-import android.database.Cursor
-import android.database.MatrixCursor
-import android.graphics.Color
 import android.os.Bundle
-import android.provider.BaseColumns
-import android.speech.RecognizerIntent
-import android.view.*
-import android.widget.AutoCompleteTextView
-import android.widget.ImageView
-import androidx.appcompat.widget.SearchView
-import androidx.core.content.ContextCompat
-import androidx.cursoradapter.widget.CursorAdapter
-import androidx.cursoradapter.widget.SimpleCursorAdapter
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.ExperimentalPagingApi
 import androidx.recyclerview.widget.GridLayoutManager
-import com.barisatalay.filterdialog.FilterDialog
-import com.barisatalay.filterdialog.model.DialogListener
-import com.example.testingproject.*
-import com.example.testingproject.recyclers.HeadLinesAdapter
-import com.example.testingproject.mvvm.MainViewModel
+import androidx.recyclerview.widget.RecyclerView
+import com.example.testingproject.Utils
 import com.example.testingproject.databinding.TopheadlinesLayoutBinding
-import com.example.testingproject.ui.FavNewsActivity
-import com.example.testingproject.models.SuggestionsModel
-import com.example.testingproject.mvvm.SharedViewModel
-import com.example.testingproject.ui.NewsDetailsActivity
+import com.example.testingproject.models.EventBusModel
+import com.example.testingproject.mvvm.MainViewModel
 import com.example.testingproject.newslistener.HeadlinesOnListener
 import com.example.testingproject.newsmodels.Article
-import com.example.testingproject.newsmodels.HeadlinesModel
+import com.example.testingproject.recyclers.HeadLinesAdapter
 import com.example.testingproject.recyclers.states.NewsStateAdapter
-import com.example.testingproject.ui.SettingsActivity
+import com.example.testingproject.ui.NewsDetailsActivity
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import timber.log.Timber
-import java.util.*
 
 
 @AndroidEntryPoint
 @ExperimentalPagingApi
 class HeadlinesFragment : Fragment() {
 
-     private var query = ""
-     private  var selectedLanguage = "us"
+
      private lateinit var headlinesAdapter: HeadLinesAdapter
      private val mainViewModel: MainViewModel by viewModels()
      lateinit var binding : TopheadlinesLayoutBinding
@@ -66,7 +45,6 @@ class HeadlinesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
         binding.headlinesRecycler.apply {
             layoutManager = GridLayoutManager(requireContext(),2)
@@ -89,9 +67,8 @@ class HeadlinesFragment : Fragment() {
 
         }
 
-
         if(Utils.checkConnectivity(requireContext())){
-            fetchData(selectedLanguage)
+            fetchData("us")
         } else {
             lifecycleScope.launchWhenStarted {
                 mainViewModel.getOfflineHeadlines().collect {
@@ -107,16 +84,7 @@ class HeadlinesFragment : Fragment() {
 
         }
 
-
-        // TODO : Get Bundle Data
-        val arguments = arguments
-        arguments?.let {
-            val receivedQuery = it.getString("query")
-            fetchData(receivedQuery!!)
-            Timber.d("Received Query Headlines $receivedQuery")
-        }
     }
-
     private fun fetchData(selectedLanguage : String) {
 
         lifecycleScope.launch {
@@ -125,14 +93,51 @@ class HeadlinesFragment : Fragment() {
             }
         }
 
+        // TODO : First Method Checking Adapter count
         binding.headlinesRecycler.adapter = headlinesAdapter
-        if(headlinesAdapter.itemCount == 0){
+        if(headlinesAdapter.itemCount == -1){
             binding.noNews.visibility = View.VISIBLE
         } else {
             binding.noNews.visibility = View.INVISIBLE
         }
+
+        // TODO : Second Method setting recycler with observer and check for itemcount
+//        headlinesAdapter.registerAdapterDataObserver(object :RecyclerView.AdapterDataObserver(){
+//            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+//                super.onItemRangeInserted(positionStart, itemCount)
+//                val adapterCount = headlinesAdapter.itemCount
+//                if(adapterCount == 0 &&  itemCount == 0){
+//                    // list is  empty
+//                } else {
+//                    // list is not empty
+//                }
+//            }
+//        })
+
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+     fun onMessageEventMain(messageEvent: EventBusModel){
+        if(messageEvent.query.isNotEmpty()){
+            fetchData(messageEvent.query)
+        }
+        // we receive data here
+    }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        EventBus.getDefault().unregister(this)
+    }
 }
 
 
