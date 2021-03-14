@@ -32,9 +32,9 @@ class NewsDetailsActivity : AppCompatActivity() {
         val intent = intent
         intent?.let {
                 binding.apply {
-                    setAuthor.text = StringBuilder().append("Author").append(" ").append(it.getStringExtra("author")).toString()
-                    favdescription.text = it.getStringExtra("description")
-                    favtitle.text = it.getStringExtra("title")
+                    setAuthor.text = StringBuilder().append("• ").append("Author").append(":").append(it.getStringExtra("author")).toString()
+                    favdescription.text = StringBuilder().append("• ").append(it.getStringExtra("description"))
+                    favtitle.text = StringBuilder().append("• ").append(it.getStringExtra("title"))
                     textDate.text = formatDate(it.getStringExtra("date")!!)
                     Picasso.get().load(it.getStringExtra("imgUrl")).fit().into(favImage)
 
@@ -57,7 +57,7 @@ class NewsDetailsActivity : AppCompatActivity() {
                 binding.checkBox.isChecked = false
             } else {
                 for (element in it) {
-                    if(element.publishedAt.equals(intent.getStringExtra("date"))){
+                    if(element.description.equals(intent.getStringExtra("description"))){
                         if (element.isSaved!!) {
                             binding.checkBox.isChecked = element.isSaved!!
                             break
